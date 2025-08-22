@@ -39,10 +39,7 @@
 - (IBAction)playButtonAction:(id)sender {
     NSString *testURL = @"https://cdn-aws-test2.playlet.com/hls/v1/vip/9032/1/1_8875c78f5cd0f238d6bd4d5d9c718ca9.m3u8";
     
-    // 设置播放视图
-    [self.m3u8Player setupPlayerLayerInView:self.view];
-    
-    // 开始播放
+    // 开始播放（图层会在播放准备完毕后设置）
     [self.m3u8Player playM3U8WithURL:testURL];
     
     NSLog(@"[ViewController] 开始播放M3U8视频");
@@ -71,10 +68,7 @@
         NSString *homePath = NSHomeDirectory();
         NSString *filePath = [homePath stringByAppendingFormat:@"/%@", self.downloadedPath];
         
-        // 设置播放视图
-        [self.m3u8Player setupPlayerLayerInView:self.view];
-        
-        // 播放本地文件
+        // 播放本地文件（图层会在播放准备完毕后设置）
         [self.m3u8Player playLocalM3U8WithPath:filePath];
         
         NSLog(@"[ViewController] 开始播放本地M3U8视频: %@", filePath);
@@ -98,7 +92,14 @@
             NSLog(@"[ViewController] 播放器状态：未知");
             break;
         case AVPlayerStatusReadyToPlay:
+        {
             NSLog(@"[ViewController] 播放器状态：准备完毕，开始播放");
+            // 在播放准备完毕时设置播放器图层
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.m3u8Player setupPlayerLayerInView:self.view];
+                NSLog(@"[ViewController] 播放器图层设置完成，视图尺寸: %@", NSStringFromCGRect(self.view.bounds));
+            });
+        }
             break;
         case AVPlayerStatusFailed:
             NSLog(@"[ViewController] 播放器状态：播放失败");
