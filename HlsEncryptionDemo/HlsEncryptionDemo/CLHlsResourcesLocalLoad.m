@@ -24,15 +24,25 @@
 }
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest {
     NSString *url = [[[loadingRequest request] URL] absoluteString];
-    NSLog(@"%@",loadingRequest.request.URL);
-    //因为下载的时候已经系统存储的key的链接是个错误的以ckey开头的链接，所以还是会走到这个回调里这里在替换一次 AES-128的key 就可以正常播放本地HLS了
-    if (![url hasSuffix: @".ts"] && ![url isEqualToString: @"m3u8Scheme://error.m3u8"]) {
-          NSData * date = [[NSUserDefaults standardUserDefaults] objectForKey:@"localKey"];
-          [[loadingRequest dataRequest] respondWithData:date ];
-          [loadingRequest finishLoading];
-          return true;
+    NSLog(@"本地播放拦截到请求: %@", url);
+    
+    // 拦截密钥请求，使用本地存储的密钥
+    if ([url containsString:@"api2-test.playletonline.com/open/theater/hlsVerify"]) {
+        NSData *localKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"localKey"];
+        if (localKey) {
+            loadingRequest.contentInformationRequest.contentType = AVStreamingKeyDeliveryPersistentContentKeyType;
+            [[loadingRequest dataRequest] respondWithData:localKey];
+            [loadingRequest finishLoading];
+            NSLog(@"使用本地存储的密钥，长度: %lu", (unsigned long)localKey.length);
+            return true;
+        } else {
+            NSLog(@"本地密钥不存在");
+            [loadingRequest finishLoadingWithError: [[NSError alloc] initWithDomain: NSURLErrorDomain code: 404 userInfo: @{NSLocalizedDescriptionKey: @"本地密钥不存在"}]];
+            return true;
+        }
     }
-    return true;
+    
+    return false;
 }
 - (AVPlayerItem *)playItemWithLocalPath:(NSString *)path  {
     self.path = path;

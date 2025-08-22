@@ -23,6 +23,13 @@
 		7EB3ADE82366E69900B13355 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADE02366E69900B13355 /* AFSecurityPolicy.m */; };
 		7EB3ADEB2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADEA2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m */; };
 		7EB3ADEE2366EF8F00B13355 /* CLHlsResourcesDownloadTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADED2366EF8F00B13355 /* CLHlsResourcesDownloadTool.m */; };
+		C9673EBC2E585FCF00D02ADB /* m3u8加解密流程.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */; };
+		C9673EBD2E585FCF00D02ADB /* readme.svg in Resources */ = {isa = PBXBuildFile; fileRef = C9673EB92E585FCF00D02ADB /* readme.svg */; };
+		C9673EBE2E585FCF00D02ADB /* M3U8AuthConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */; };
+		C9673EBF2E585FCF00D02ADB /* M3U8Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB12E585FCF00D02ADB /* M3U8Downloader.m */; };
+		C9673EC02E585FCF00D02ADB /* M3U8Player.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB72E585FCF00D02ADB /* M3U8Player.m */; };
+		C9673EC12E585FCF00D02ADB /* M3U8Loader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB52E585FCF00D02ADB /* M3U8Loader.m */; };
+		C9673EC22E585FCF00D02ADB /* M3U8KeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB32E585FCF00D02ADB /* M3U8KeyManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +65,19 @@
 		7EB3ADEA2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLHlsResourcesLocalLoad.m; sourceTree = "<group>"; };
 		7EB3ADEC2366EF8F00B13355 /* CLHlsResourcesDownloadTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLHlsResourcesDownloadTool.h; sourceTree = "<group>"; };
 		7EB3ADED2366EF8F00B13355 /* CLHlsResourcesDownloadTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLHlsResourcesDownloadTool.m; sourceTree = "<group>"; };
+		C9673EAE2E585FCF00D02ADB /* M3U8AuthConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8AuthConfig.h; sourceTree = "<group>"; };
+		C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8AuthConfig.m; sourceTree = "<group>"; };
+		C9673EB02E585FCF00D02ADB /* M3U8Downloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Downloader.h; sourceTree = "<group>"; };
+		C9673EB12E585FCF00D02ADB /* M3U8Downloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Downloader.m; sourceTree = "<group>"; };
+		C9673EB22E585FCF00D02ADB /* M3U8KeyManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8KeyManager.h; sourceTree = "<group>"; };
+		C9673EB32E585FCF00D02ADB /* M3U8KeyManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8KeyManager.m; sourceTree = "<group>"; };
+		C9673EB42E585FCF00D02ADB /* M3U8Loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Loader.h; sourceTree = "<group>"; };
+		C9673EB52E585FCF00D02ADB /* M3U8Loader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Loader.m; sourceTree = "<group>"; };
+		C9673EB62E585FCF00D02ADB /* M3U8Player.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Player.h; sourceTree = "<group>"; };
+		C9673EB72E585FCF00D02ADB /* M3U8Player.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Player.m; sourceTree = "<group>"; };
+		C9673EB82E585FCF00D02ADB /* M3U8PlayerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8PlayerDelegate.h; sourceTree = "<group>"; };
+		C9673EB92E585FCF00D02ADB /* readme.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.svg; sourceTree = "<group>"; };
+		C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "m3u8加解密流程.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +110,8 @@
 		7EB3ADB72366E45000B13355 /* HlsEncryptionDemo */ = {
 			isa = PBXGroup;
 			children = (
+				C9673EBA2E585FCF00D02ADB /* Loader */,
+				C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */,
 				7EB3ADD42366E69900B13355 /* AFNetworking */,
 				7EB3ADB82366E45000B13355 /* AppDelegate.h */,
 				7EB3ADB92366E45000B13355 /* AppDelegate.m */,
@@ -132,6 +154,25 @@
 				7EB3ADE22366E69900B13355 /* AFHTTPSessionManager.h */,
 			);
 			path = AFNetworking;
+			sourceTree = "<group>";
+		};
+		C9673EBA2E585FCF00D02ADB /* Loader */ = {
+			isa = PBXGroup;
+			children = (
+				C9673EAE2E585FCF00D02ADB /* M3U8AuthConfig.h */,
+				C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */,
+				C9673EB02E585FCF00D02ADB /* M3U8Downloader.h */,
+				C9673EB12E585FCF00D02ADB /* M3U8Downloader.m */,
+				C9673EB22E585FCF00D02ADB /* M3U8KeyManager.h */,
+				C9673EB32E585FCF00D02ADB /* M3U8KeyManager.m */,
+				C9673EB42E585FCF00D02ADB /* M3U8Loader.h */,
+				C9673EB52E585FCF00D02ADB /* M3U8Loader.m */,
+				C9673EB62E585FCF00D02ADB /* M3U8Player.h */,
+				C9673EB72E585FCF00D02ADB /* M3U8Player.m */,
+				C9673EB82E585FCF00D02ADB /* M3U8PlayerDelegate.h */,
+				C9673EB92E585FCF00D02ADB /* readme.svg */,
+			);
+			path = Loader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -194,6 +235,8 @@
 				7EB3ADC82366E45200B13355 /* LaunchScreen.storyboard in Resources */,
 				7EB3ADC52366E45200B13355 /* Assets.xcassets in Resources */,
 				7EB3ADC32366E45000B13355 /* Main.storyboard in Resources */,
+				C9673EBC2E585FCF00D02ADB /* m3u8加解密流程.txt in Resources */,
+				C9673EBD2E585FCF00D02ADB /* readme.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +250,11 @@
 				7EB3ADE62366E69900B13355 /* AFURLRequestSerialization.m in Sources */,
 				7EB3ADC02366E45000B13355 /* ViewController.m in Sources */,
 				7EB3ADE72366E69900B13355 /* AFNetworkReachabilityManager.m in Sources */,
+				C9673EBE2E585FCF00D02ADB /* M3U8AuthConfig.m in Sources */,
+				C9673EBF2E585FCF00D02ADB /* M3U8Downloader.m in Sources */,
+				C9673EC02E585FCF00D02ADB /* M3U8Player.m in Sources */,
+				C9673EC12E585FCF00D02ADB /* M3U8Loader.m in Sources */,
+				C9673EC22E585FCF00D02ADB /* M3U8KeyManager.m in Sources */,
 				7EB3ADE52366E69900B13355 /* AFURLSessionManager.m in Sources */,
 				7EB3ADEB2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m in Sources */,
 				7EB3ADBA2366E45000B13355 /* AppDelegate.m in Sources */,

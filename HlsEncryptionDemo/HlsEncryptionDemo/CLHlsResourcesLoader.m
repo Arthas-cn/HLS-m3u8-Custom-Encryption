@@ -8,13 +8,9 @@
 
 #import "CLHlsResourcesLoader.h"
 #import "AFNetworking.h"
-#define WEAKSELF typeof(self) __weak weakSelf = self;
+
 @interface CLHlsResourcesLoader ()
-
-@property (nonatomic, strong) NSString * m3u8_url;
-@property (nonatomic, strong) NSString * m3u8_url_vir;
 @end
-
 
 @implementation CLHlsResourcesLoader
 + (CLHlsResourcesLoader *)shared {
@@ -28,7 +24,6 @@
 
 - (CLHlsResourcesLoader *)init {
     self = [super init];
-    _m3u8_url_vir = @"m3u8Scheme://error.m3u8";
     return self;
 }
 
@@ -37,30 +32,18 @@
     if (!url) {
         return false;
     }
-    //第三步.ts请求的链接是在基础链接的域名后拼接的 因为一开始替换了M3u8请求的域名，所以这里在替换回正常的要请求的域名就可以了
-    if ([url hasSuffix: @".ts"]) {
-        WEAKSELF
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSURL * requestUrl =  [NSURL URLWithString:weakSelf.m3u8_url];
-            NSString *newUrl = [NSString stringWithFormat:@"http://%@",[url stringByReplacingOccurrencesOfString: self.m3u8_url_vir withString: requestUrl.host]] ;
-            NSURL *url = [[NSURL alloc] initWithString: newUrl];
-            if (url) {
-                NSURLRequest *redirect = [[NSURLRequest alloc] initWithURL: url];
-                [loadingRequest setRedirect: redirect];
-                [loadingRequest setResponse: [[NSHTTPURLResponse alloc] initWithURL: [redirect URL] statusCode: 301 HTTPVersion: nil headerFields: nil]];
-                [loadingRequest finishLoading];
-            } else {
-                [self finishLoadingError: loadingRequest];
-            }
-        });
-        return true;
-    }
-    //第一步修改M3u8文件的头文件来重定向key链接,这里也可以做一些链接解密，或者拼接请求key的链接
-    if ([url isEqualToString: _m3u8_url_vir]) {
+    
+    NSLog(@"拦截到请求: %@", url);
+    
+    // 只拦截密钥请求，根据流程文档，密钥地址是：https://api2-test.playletonline.com/open/theater/hlsVerify
+    if ([url containsString:@"api2-test.playletonline.com/open/theater/hlsVerify"]) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSData *data = [self M3u8Request: self->_m3u8_url];
+            NSData *data = [self KeyRequest:url];
             if (data) {
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    // 存储密钥供本地播放使用
+                    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"localKey"];
+                    loadingRequest.contentInformationRequest.contentType = AVStreamingKeyDeliveryPersistentContentKeyType;
                     [[loadingRequest dataRequest] respondWithData: data];
                     [loadingRequest finishLoading];
                 });
@@ -72,26 +55,7 @@
         });
         return true;
     }
-   //第二步自己请求M3u8内部的key,去除多余的\n,然后将请求到的数据返回给系统，系统会自动根据你给他的key 来解析AES-128加密过的数据，这里也可以做一些拼接key或者二次解密key
-    if (![url hasSuffix: @".ts"] && ![url isEqualToString: _m3u8_url_vir]) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                   NSData *data = [self KeyRequest:url];
-                   if (data) {
-                       dispatch_async(dispatch_get_main_queue(), ^{
-                           //这里存储钥匙串主要给下载本地后播放用的，存储的key我写死了，可以替换为请求链接的 md5值作为标记
-                           [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"localKey"];
-                           loadingRequest.contentInformationRequest.contentType = AVStreamingKeyDeliveryPersistentContentKeyType;
-                           [[loadingRequest dataRequest] respondWithData: data];
-                           [loadingRequest finishLoading];
-                       });
-                   } else {
-                       dispatch_async(dispatch_get_main_queue(), ^{
-                           [self finishLoadingError: loadingRequest];
-                       });
-                   }
-               });
-        return true;
-    }
+    
     return false;
 }
 
@@ -99,91 +63,41 @@
     [loadingRequest finishLoadingWithError: [[NSError alloc] initWithDomain: NSURLErrorDomain code: 400 userInfo: nil]];
 }
 
-- (NSData *)M3u8Request: (NSString *)url {
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    static NSData *result = NULL;
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    NSURLRequest *requset = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-    //返回一个下载任务对象
-    NSURLSessionDownloadTask *loadTask = [manager downloadTaskWithRequest:requset progress:^(NSProgress * _Nonnull downloadProgress) {
-        NSLog(@"%lld----%lld",downloadProgress.completedUnitCount,downloadProgress.totalUnitCount);
-        
-    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        
-        NSString *fullPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).lastObject stringByAppendingString:response.suggestedFilename];
-        NSLog(@"targetPath-：%@---fullPath:-%@",targetPath,fullPath);
-        
-        //这个block 需要返回一个目标 地址 存储下载的文件
-        return  [NSURL fileURLWithPath:fullPath];
-    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-        //这里将M3u8里的请求key的方法换成错误的链接方便重定向
-        NSString * string =  [NSString stringWithContentsOfURL:filePath encoding:(NSUTF8StringEncoding) error:nil];
-        NSString * newString  = [string stringByReplacingOccurrencesOfString:@"http" withString:@"ckey"];
-        result = [newString dataUsingEncoding:NSUTF8StringEncoding];
-                dispatch_semaphore_signal(semaphore);
-        NSLog(@"下载完成地址:%@",filePath);
-        
-    }];
-    [loadTask resume];
-    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-    return result;
-}
 
-- (NSData *)playDataRequest:(NSString *)url {
-       dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-       static NSData *result = NULL;
-      NSString *newUrl = [url stringByReplacingOccurrencesOfString: @"ckey" withString: @"http"];
-       AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-       NSURLRequest *requset = [NSURLRequest requestWithURL:[NSURL URLWithString:newUrl]];
-       //返回一个下载任务对象
-       NSURLSessionDownloadTask *loadTask = [manager downloadTaskWithRequest:requset progress:^(NSProgress * _Nonnull downloadProgress) {
-           NSLog(@"%lld----%lld",downloadProgress.completedUnitCount,downloadProgress.totalUnitCount);
-       } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-           NSString *fullPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).lastObject stringByAppendingString:response.suggestedFilename];
-           NSLog(@"targetPath-：%@---fullPath:-%@",targetPath,fullPath);
-           return  [NSURL fileURLWithPath:fullPath];
-       } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-          NSString * string =  [NSString stringWithContentsOfURL:filePath encoding:(NSUTF8StringEncoding) error:nil];
-            NSString * newString  = [string stringByReplacingOccurrencesOfString:@"http" withString:@"ckey"];
-           result = [newString dataUsingEncoding:NSUTF8StringEncoding];
-           dispatch_semaphore_signal(semaphore);
-           NSLog(@"下载完成地址:%@",filePath);
-           
-       }];
-       [loadTask resume];
-       dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-       return result;
-}
 - (NSData *)KeyRequest: (NSString *)url {
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-    static NSData *result = NULL;
+    __block NSData *result = nil;
+    
+    // 添加授权参数
+    NSString *authParams = @"auth_key=666&uid=test&session=test&sign=test&theater_id=9032&chapter_id=1";
+    NSString *newUrl;
+    if ([url containsString:@"?"]) {
+        newUrl = [NSString stringWithFormat:@"%@&%@", url, authParams];
+    } else {
+        newUrl = [NSString stringWithFormat:@"%@?%@", url, authParams];
+    }
+    
+    NSLog(@"请求密钥地址: %@", newUrl);
+    
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-     NSString *newUrl = [url stringByReplacingOccurrencesOfString: @"ckey" withString: @"http"];
-    NSURLRequest *requset = [NSURLRequest requestWithURL:[NSURL URLWithString:newUrl]];
-    //返回一个下载任务对象
-    NSURLSessionDownloadTask *loadTask = [manager downloadTaskWithRequest:requset progress:^(NSProgress * _Nonnull downloadProgress) {
-        NSLog(@"%lld----%lld",downloadProgress.completedUnitCount,downloadProgress.totalUnitCount);
-    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        NSString *fullPath =[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).lastObject stringByAppendingString:response.suggestedFilename];
-        NSLog(@"targetPath-：%@---fullPath:-%@",targetPath,fullPath);
-        //这个block 需要返回一个目标 地址 存储下载的文件
-        return  [NSURL fileURLWithPath:fullPath];
-    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-        NSString * string =  [NSString stringWithContentsOfURL:filePath encoding:(NSUTF8StringEncoding) error:nil];
-        NSString * newString  = [string stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-        result = [newString dataUsingEncoding:NSUTF8StringEncoding];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    [manager GET:newUrl parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        result = responseObject;
+        NSLog(@"密钥获取成功，长度: %lu", (unsigned long)result.length);
         dispatch_semaphore_signal(semaphore);
-        NSLog(@"下载完成地址:%@",filePath);
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"密钥请求失败: %@", error.localizedDescription);
+        result = nil;
+        dispatch_semaphore_signal(semaphore);
     }];
-    [loadTask resume];
+    
     dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     return result;
 }
 
 - (AVPlayerItem *)playItemWith: (NSString *)url {
-    self.m3u8_url = url;
-    AVURLAsset *urlAsset = [[AVURLAsset alloc] initWithURL: [[NSURL alloc] initWithString: self.m3u8_url_vir] options: nil];
+    AVURLAsset *urlAsset = [[AVURLAsset alloc] initWithURL: [NSURL URLWithString:url] options: nil];
     [[urlAsset resourceLoader] setDelegate: self queue: dispatch_get_main_queue()];
     AVPlayerItem *item = [[AVPlayerItem alloc] initWithAsset: urlAsset];
     [item setCanUseNetworkResourcesForLiveStreamingWhilePaused: YES];
@@ -191,8 +105,7 @@
 }
 
 - (AVURLAsset *)downLoadAssetWith:(NSString *)url {
-    self.m3u8_url = url;
-    AVURLAsset *urlAsset = [[AVURLAsset alloc] initWithURL: [[NSURL alloc] initWithString: self.m3u8_url_vir] options: nil];
+    AVURLAsset *urlAsset = [[AVURLAsset alloc] initWithURL: [NSURL URLWithString:url] options: nil];
     [[urlAsset resourceLoader] setDelegate: self queue: dispatch_get_main_queue()];
     return urlAsset;
 }

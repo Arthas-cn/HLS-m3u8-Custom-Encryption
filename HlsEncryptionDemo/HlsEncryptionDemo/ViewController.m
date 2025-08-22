@@ -7,102 +7,151 @@
 //
 
 #import "ViewController.h"
-#import "CLHlsResourcesLoader.h"
-#import "CLHlsResourcesLocalLoad.h"
-#import "CLHlsResourcesDownloadTool.h"
+#import "Loader/M3U8Loader.h"
 
-@interface ViewController ()
+@interface ViewController () <M3U8PlayerDelegate, M3U8DownloaderDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *palyButton;
 @property (weak, nonatomic) IBOutlet UIButton *downloadButton;
 @property (weak, nonatomic) IBOutlet UIButton *playDownloadButton;
-@property (nonatomic, strong) AVPlayer * player;
-@property (nonatomic, strong) AVPlayerLayer * playerLayer;
+@property (nonatomic, strong) M3U8Player *m3u8Player;
+@property (nonatomic, strong) M3U8Downloader *m3u8Downloader;
+@property (nonatomic, strong) NSString *downloadedPath;
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-   
+    
+    // 初始化M3U8播放器
+    M3U8AuthConfig *authConfig = [M3U8AuthConfig defaultTestConfig];
+    self.m3u8Player = [[M3U8Player alloc] initWithAuthConfig:authConfig];
+    self.m3u8Player.delegate = self;
+    
+    // 初始化M3U8下载器
+    self.m3u8Downloader = [M3U8Downloader sharedDownloader];
+    self.m3u8Downloader.delegate = self;
+    [self.m3u8Downloader configureWithAuthConfig:authConfig];
+    
+    NSLog(@"[ViewController] M3U8组件初始化完成，版本: %@", [M3U8Loader version]);
 }
 
 - (IBAction)playButtonAction:(id)sender {
-    if (self.player) {
-        [self.player removeObserver:self forKeyPath:@"status"];
-        [self.playerLayer removeFromSuperlayer];
-    }
-   AVPlayerItem  * item =  [[CLHlsResourcesLoader shared] playItemWith:@"http://ogn0m4it0.bkt.clouddn.com/58IzAY_GglrObBBbbD98wrHIbLk=/llhpmYRGVWfZL8dyCPXwCwKovI9R"];
-   self.player = [AVPlayer playerWithPlayerItem:item];
-   [self.player  addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-    [self createPlayLayer];
+    NSString *testURL = @"https://cdn-aws-test2.playlet.com/hls/v1/vip/9032/1/1_8875c78f5cd0f238d6bd4d5d9c718ca9.m3u8";
+    
+    // 设置播放视图
+    [self.m3u8Player setupPlayerLayerInView:self.view];
+    
+    // 开始播放
+    [self.m3u8Player playM3U8WithURL:testURL];
+    
+    NSLog(@"[ViewController] 开始播放M3U8视频");
 }
 
 
 
 - (IBAction)downloadButtonAction:(id)sender {
-     AVURLAsset  * asset =  [[CLHlsResourcesLoader shared] downLoadAssetWith:@"http://ogn0m4it0.bkt.clouddn.com/58IzAY_GglrObBBbbD98wrHIbLk=/llhpmYRGVWfZL8dyCPXwCwKovI9R"];
-    [[CLHlsResourcesDownloadTool defaultManager] dowloadHlsAsset:asset progressBlock:^(float progress) {
-        
-    } completeBlock:^(BOOL successd, NSString *path, NSError *error) {
-        if (successd) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-              [[NSUserDefaults standardUserDefaults] setObject:path forKey:@"assetPath"];
-            });
-        }
-    }];
+    NSString *testURL = @"https://cdn-aws-test2.playlet.com/hls/v1/vip/9032/1/1_8875c78f5cd0f238d6bd4d5d9c718ca9.m3u8";
+    
+    if (self.m3u8Downloader.isDownloading) {
+        NSLog(@"[ViewController] 已有下载任务在进行中");
+        return;
+    }
+    
+    // 开始下载
+    [self.m3u8Downloader downloadM3U8WithURL:testURL];
+    
+    NSLog(@"[ViewController] 开始下载M3U8视频");
 }
 
 
 
 - (IBAction)playDownloadButtonAction:(id)sender {
-    NSString * path = [[NSUserDefaults standardUserDefaults] objectForKey:@"assetPath"];
-    if (path) {
-        if (self.player) {
-            [self.player removeObserver:self forKeyPath:@"status"];
-            [self.playerLayer removeFromSuperlayer];
-        }
+    if (self.downloadedPath) {
         NSString *homePath = NSHomeDirectory();
-        NSString * filePath = [homePath stringByAppendingFormat:@"/%@",path];
-        AVPlayerItem  * item =  [[CLHlsResourcesLocalLoad shared] playItemWithLocalPath:filePath];
-        self.player = [AVPlayer playerWithPlayerItem:item];
-        [self. player  addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-        [self createPlayLayer];
-    }else {
-        NSLog(@"请先点击下载");
+        NSString *filePath = [homePath stringByAppendingFormat:@"/%@", self.downloadedPath];
+        
+        // 设置播放视图
+        [self.m3u8Player setupPlayerLayerInView:self.view];
+        
+        // 播放本地文件
+        [self.m3u8Player playLocalM3U8WithPath:filePath];
+        
+        NSLog(@"[ViewController] 开始播放本地M3U8视频: %@", filePath);
+    } else {
+        NSLog(@"[ViewController] 请先点击下载");
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" 
+                                                                       message:@"请先下载视频" 
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 
 
-- (void)createPlayLayer {
-    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-    self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    self.playerLayer.contentsScale = [UIScreen mainScreen].scale;
-    self.playerLayer.frame = [UIScreen mainScreen].bounds;
-    [self.view.layer insertSublayer:self.playerLayer atIndex:0];
+#pragma mark - M3U8PlayerDelegate
+
+- (void)m3u8Player:(M3U8Player *)player statusDidChange:(AVPlayerStatus)status {
+    switch (status) {
+        case AVPlayerStatusUnknown:
+            NSLog(@"[ViewController] 播放器状态：未知");
+            break;
+        case AVPlayerStatusReadyToPlay:
+            NSLog(@"[ViewController] 播放器状态：准备完毕，开始播放");
+            break;
+        case AVPlayerStatusFailed:
+            NSLog(@"[ViewController] 播放器状态：播放失败");
+            break;
+    }
 }
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if ([keyPath isEqualToString:@"status"]) {
-             switch (self.player.status) {
-                 case AVPlayerStatusUnknown:{
-                     NSLog(@"KVO：未知状态，此时不能播放");
-                     break;
-                 }
-                 case AVPlayerStatusReadyToPlay:{
-                      NSLog(@"KVO：准备完毕，可以播放");
-                     [self.player play];
-                       break;
-                 }
-                 case AVPlayerStatusFailed:{
-                     AVPlayerItem * item = (AVPlayerItem *)object;
-                     NSLog(@"加载异常 %@",item.error);
-               break;
-                 }
-              default:
-               break;
-             }
-            }
-    });
+
+- (void)m3u8Player:(M3U8Player *)player didFailWithError:(NSError *)error {
+    NSLog(@"[ViewController] 播放失败: %@", error.localizedDescription);
     
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"播放错误" 
+                                                                   message:error.localizedDescription 
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)m3u8Player:(M3U8Player *)player willRequestKeyForURL:(NSString *)keyURL {
+    NSLog(@"[ViewController] 即将请求密钥: %@", keyURL);
+}
+
+- (void)m3u8Player:(M3U8Player *)player didReceiveKeyData:(NSData *)keyData forURL:(NSString *)keyURL {
+    NSLog(@"[ViewController] 密钥获取成功，长度: %lu", (unsigned long)keyData.length);
+}
+
+- (void)m3u8Player:(M3U8Player *)player didFailToLoadKeyForURL:(NSString *)keyURL error:(NSError *)error {
+    NSLog(@"[ViewController] 密钥获取失败: %@", error.localizedDescription);
+}
+
+#pragma mark - M3U8DownloaderDelegate
+
+- (void)m3u8Downloader:(id)downloader downloadProgress:(float)progress {
+    NSLog(@"[ViewController] 下载进度: %.2f%%", progress * 100);
+}
+
+- (void)m3u8Downloader:(id)downloader didFinishDownloadingToPath:(NSString *)path {
+    NSLog(@"[ViewController] 下载完成: %@", path);
+    self.downloadedPath = path;
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"下载完成" 
+                                                                   message:@"视频下载完成，可以播放本地视频了" 
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)m3u8Downloader:(id)downloader didFailWithError:(NSError *)error {
+    NSLog(@"[ViewController] 下载失败: %@", error.localizedDescription);
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"下载错误" 
+                                                                   message:error.localizedDescription 
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 @end
