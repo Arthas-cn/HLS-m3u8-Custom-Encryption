@@ -14,15 +14,12 @@
 		7EB3ADC52366E45200B13355 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7EB3ADC42366E45200B13355 /* Assets.xcassets */; };
 		7EB3ADC82366E45200B13355 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EB3ADC62366E45200B13355 /* LaunchScreen.storyboard */; };
 		7EB3ADCB2366E45200B13355 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADCA2366E45200B13355 /* main.m */; };
-		7EB3ADD32366E5EC00B13355 /* CLHlsResourcesLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADD22366E5EC00B13355 /* CLHlsResourcesLoader.m */; };
 		7EB3ADE32366E69900B13355 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADD92366E69900B13355 /* AFURLResponseSerialization.m */; };
 		7EB3ADE42366E69900B13355 /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADDA2366E69900B13355 /* AFHTTPSessionManager.m */; };
 		7EB3ADE52366E69900B13355 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADDC2366E69900B13355 /* AFURLSessionManager.m */; };
 		7EB3ADE62366E69900B13355 /* AFURLRequestSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADDD2366E69900B13355 /* AFURLRequestSerialization.m */; };
 		7EB3ADE72366E69900B13355 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADDF2366E69900B13355 /* AFNetworkReachabilityManager.m */; };
 		7EB3ADE82366E69900B13355 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADE02366E69900B13355 /* AFSecurityPolicy.m */; };
-		7EB3ADEB2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADEA2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m */; };
-		7EB3ADEE2366EF8F00B13355 /* CLHlsResourcesDownloadTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADED2366EF8F00B13355 /* CLHlsResourcesDownloadTool.m */; };
 		C9673EBC2E585FCF00D02ADB /* m3u8加解密流程.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */; };
 		C9673EBD2E585FCF00D02ADB /* readme.svg in Resources */ = {isa = PBXBuildFile; fileRef = C9673EB92E585FCF00D02ADB /* readme.svg */; };
 		C9673EBE2E585FCF00D02ADB /* M3U8AuthConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */; };
@@ -45,8 +42,6 @@
 		7EB3ADC72366E45200B13355 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7EB3ADC92366E45200B13355 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7EB3ADCA2366E45200B13355 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		7EB3ADD12366E5EC00B13355 /* CLHlsResourcesLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLHlsResourcesLoader.h; sourceTree = "<group>"; };
-		7EB3ADD22366E5EC00B13355 /* CLHlsResourcesLoader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLHlsResourcesLoader.m; sourceTree = "<group>"; };
 		7EB3ADD52366E69900B13355 /* AFSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFSecurityPolicy.h; sourceTree = "<group>"; };
 		7EB3ADD62366E69900B13355 /* AFNetworkReachabilityManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworkReachabilityManager.h; sourceTree = "<group>"; };
 		7EB3ADD72366E69900B13355 /* AFURLSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFURLSessionManager.h; sourceTree = "<group>"; };
@@ -61,10 +56,6 @@
 		7EB3ADE02366E69900B13355 /* AFSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFSecurityPolicy.m; sourceTree = "<group>"; };
 		7EB3ADE12366E69900B13355 /* AFCompatibilityMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFCompatibilityMacros.h; sourceTree = "<group>"; };
 		7EB3ADE22366E69900B13355 /* AFHTTPSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPSessionManager.h; sourceTree = "<group>"; };
-		7EB3ADE92366ECCC00B13355 /* CLHlsResourcesLocalLoad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLHlsResourcesLocalLoad.h; sourceTree = "<group>"; };
-		7EB3ADEA2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLHlsResourcesLocalLoad.m; sourceTree = "<group>"; };
-		7EB3ADEC2366EF8F00B13355 /* CLHlsResourcesDownloadTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CLHlsResourcesDownloadTool.h; sourceTree = "<group>"; };
-		7EB3ADED2366EF8F00B13355 /* CLHlsResourcesDownloadTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CLHlsResourcesDownloadTool.m; sourceTree = "<group>"; };
 		C9673EAE2E585FCF00D02ADB /* M3U8AuthConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8AuthConfig.h; sourceTree = "<group>"; };
 		C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8AuthConfig.m; sourceTree = "<group>"; };
 		C9673EB02E585FCF00D02ADB /* M3U8Downloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Downloader.h; sourceTree = "<group>"; };
@@ -119,12 +110,6 @@
 				7EB3ADBC2366E45000B13355 /* SceneDelegate.m */,
 				7EB3ADBE2366E45000B13355 /* ViewController.h */,
 				7EB3ADBF2366E45000B13355 /* ViewController.m */,
-				7EB3ADD12366E5EC00B13355 /* CLHlsResourcesLoader.h */,
-				7EB3ADD22366E5EC00B13355 /* CLHlsResourcesLoader.m */,
-				7EB3ADE92366ECCC00B13355 /* CLHlsResourcesLocalLoad.h */,
-				7EB3ADEA2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m */,
-				7EB3ADEC2366EF8F00B13355 /* CLHlsResourcesDownloadTool.h */,
-				7EB3ADED2366EF8F00B13355 /* CLHlsResourcesDownloadTool.m */,
 				7EB3ADC12366E45000B13355 /* Main.storyboard */,
 				7EB3ADC42366E45200B13355 /* Assets.xcassets */,
 				7EB3ADC62366E45200B13355 /* LaunchScreen.storyboard */,
@@ -256,13 +241,10 @@
 				C9673EC12E585FCF00D02ADB /* M3U8Loader.m in Sources */,
 				C9673EC22E585FCF00D02ADB /* M3U8KeyManager.m in Sources */,
 				7EB3ADE52366E69900B13355 /* AFURLSessionManager.m in Sources */,
-				7EB3ADEB2366ECCC00B13355 /* CLHlsResourcesLocalLoad.m in Sources */,
 				7EB3ADBA2366E45000B13355 /* AppDelegate.m in Sources */,
-				7EB3ADD32366E5EC00B13355 /* CLHlsResourcesLoader.m in Sources */,
 				7EB3ADCB2366E45200B13355 /* main.m in Sources */,
 				7EB3ADE32366E69900B13355 /* AFURLResponseSerialization.m in Sources */,
 				7EB3ADE42366E69900B13355 /* AFHTTPSessionManager.m in Sources */,
-				7EB3ADEE2366EF8F00B13355 /* CLHlsResourcesDownloadTool.m in Sources */,
 				7EB3ADE82366E69900B13355 /* AFSecurityPolicy.m in Sources */,
 				7EB3ADBD2366E45000B13355 /* SceneDelegate.m in Sources */,
 			);
