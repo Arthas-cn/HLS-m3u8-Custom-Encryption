@@ -37,7 +37,7 @@
 }
 
 - (IBAction)playButtonAction:(id)sender {
-    NSString *testURL = @"https://cdn-aws-test2.playlet.com/hls/v1/vip/9032/1/1_8875c78f5cd0f238d6bd4d5d9c718ca9.m3u8";
+    NSString *testURL = @"https://cdn-aws2.playlet.com/hls/v1/i18n/vip/1089/1/1_0f3c774a014fae7631c5ec79f4ec3c8d.m3u8";
     
     // 开始播放（图层会在播放准备完毕后设置）
     [self.m3u8Player playM3U8WithURL:testURL];
