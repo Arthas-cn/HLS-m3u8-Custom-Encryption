@@ -85,6 +85,68 @@
     return total;
 }
 
+- (void)printDetailedInfo {
+    NSLog(@"[MediaPlaylist] ===== 媒体播放列表详细信息 =====");
+    NSLog(@"[MediaPlaylist] 版本: %ld", (long)self.version);
+    NSLog(@"[MediaPlaylist] 目标时长: %.1f秒", self.targetDuration);
+    NSLog(@"[MediaPlaylist] 播放列表类型: %@", self.playlistType);
+    NSLog(@"[MediaPlaylist] 总时长: %.1f秒 (%.1f分钟)", [self totalDuration], [self totalDuration] / 60.0);
+    NSLog(@"[MediaPlaylist] 是否结束列表: %@", self.isEndList ? @"是" : @"否");
+    
+    // 加密信息
+    if (self.encryptionInfo) {
+        NSLog(@"[MediaPlaylist] ----- 加密信息 -----");
+        NSLog(@"  - 加密方法: %@", self.encryptionInfo.method);
+        NSLog(@"  - 密钥URI: %@", self.encryptionInfo.uri);
+        NSLog(@"  - IV值: %@", self.encryptionInfo.iv);
+        NSLog(@"  - 密钥格式: %@", self.encryptionInfo.keyFormat);
+    } else {
+        NSLog(@"[MediaPlaylist] 加密信息: 无加密");
+    }
+    
+    // TS片段统计
+    NSLog(@"[MediaPlaylist] ----- 片段统计 -----");
+    NSLog(@"[MediaPlaylist] 片段总数: %lu", (unsigned long)self.segments.count);
+    
+    if (self.segments.count > 0) {
+        NSTimeInterval minDuration = MAXFLOAT;
+        NSTimeInterval maxDuration = 0;
+        NSTimeInterval totalDuration = 0;
+        
+        for (SegmentInfo *segment in self.segments) {
+            totalDuration += segment.duration;
+            minDuration = MIN(minDuration, segment.duration);
+            maxDuration = MAX(maxDuration, segment.duration);
+        }
+        
+        NSTimeInterval avgDuration = totalDuration / self.segments.count;
+        
+        NSLog(@"[MediaPlaylist] 片段时长范围: %.1f - %.1f秒", minDuration, maxDuration);
+        NSLog(@"[MediaPlaylist] 平均片段时长: %.1f秒", avgDuration);
+        
+        // 显示前几个和后几个片段
+        NSInteger displayCount = MIN(3, (NSInteger)self.segments.count);
+        NSLog(@"[MediaPlaylist] ----- 前%ld个片段 -----", (long)displayCount);
+        for (NSInteger i = 0; i < displayCount; i++) {
+            SegmentInfo *segment = self.segments[i];
+            NSLog(@"  #%ld: %.1fs - %@", (long)(i + 1), segment.duration, segment.url);
+        }
+        
+        if (self.segments.count > displayCount) {
+            NSLog(@"[MediaPlaylist] ... (省略%lu个片段) ...", 
+                  (unsigned long)(self.segments.count - displayCount * 2));
+            
+            NSLog(@"[MediaPlaylist] ----- 后%ld个片段 -----", (long)displayCount);
+            for (NSInteger i = self.segments.count - displayCount; i < self.segments.count; i++) {
+                SegmentInfo *segment = self.segments[i];
+                NSLog(@"  #%ld: %.1fs - %@", (long)(i + 1), segment.duration, segment.url);
+            }
+        }
+    }
+    
+    NSLog(@"[MediaPlaylist] ================================");
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"MediaPlaylist: version=%ld, targetDuration=%.1f, type=%@, segments=%lu, totalDuration=%.1f", 
             (long)self.version, self.targetDuration, self.playlistType, 
@@ -130,29 +192,67 @@
 }
 
 - (NSString *)qualityLevel {
-    // 清晰度等级标准：
-    // 标清：分辨率 ≤ 480p，带宽 ≤ 500kbps
-    // 高清：分辨率 480p-720p，带宽 500kbps-1Mbps  
-    // 超清：分辨率 720p-1080p，带宽 1Mbps-2Mbps
-    // 蓝光：分辨率 ≥ 1080p，带宽 ≥ 2Mbps
+    // 清晰度等级标准（基于视频的有效分辨率，兼容横屏和竖屏）：
+    // 标清：有效分辨率 ≤ 480p
+    // 高清：有效分辨率 480p < resolution ≤ 720p
+    // 超清：有效分辨率 720p < resolution ≤ 1080p  
+    // 蓝光：有效分辨率 > 1080p
     
     NSInteger bandwidthKbps = self.bandwidth / 1000; // 转换为kbps
-    NSInteger heightP = self.height;
     
-    if (heightP >= 1080 && bandwidthKbps >= 2000) {
+    // 获取有效分辨率（较小的尺寸，适用于横屏和竖屏）
+    NSInteger effectiveResolution = MIN(self.width, self.height);
+    
+    NSLog(@"[StreamInfo] 分辨率分析: %dx%d (%@), 有效分辨率: %ldp, 带宽: %ld kbps", 
+          (int)self.width, (int)self.height, [self orientation], (long)effectiveResolution, (long)bandwidthKbps);
+    
+    // 优先按有效分辨率判断
+    if (effectiveResolution > 1080) {
         return @"蓝光";
-    } else if (heightP > 720 && heightP < 1080 && bandwidthKbps >= 1000 && bandwidthKbps < 2000) {
-        return @"超清";
-    } else if (heightP > 480 && heightP <= 720 && bandwidthKbps >= 500 && bandwidthKbps < 1000) {
+    } else if (effectiveResolution > 720) {
+        // 720p < resolution ≤ 1080p
+        // 如果带宽特别高（>1.5Mbps），可能是蓝光品质
+        if (bandwidthKbps >= 1500) {
+            return @"蓝光";
+        } else {
+            return @"超清";
+        }
+    } else if (effectiveResolution > 480) {
+        // 480p < resolution ≤ 720p
         return @"高清";
     } else {
+        // resolution ≤ 480p
         return @"标清";
     }
 }
 
+#pragma mark - 视频方向判断
+
+- (BOOL)isLandscape {
+    return self.width > self.height;
+}
+
+- (BOOL)isPortrait {
+    return self.height > self.width;
+}
+
+- (BOOL)isSquare {
+    return self.width == self.height;
+}
+
+- (NSString *)orientation {
+    if ([self isLandscape]) {
+        return @"横屏";
+    } else if ([self isPortrait]) {
+        return @"竖屏";
+    } else {
+        return @"正方形";
+    }
+}
+
 - (NSString *)description {
-    return [NSString stringWithFormat:@"StreamInfo: %@ (%@), bandwidth=%ld, resolution=%@, frameRate=%.1f, url=%@", 
-            [self qualityLevel], self.codecs, (long)self.bandwidth, self.resolution, self.frameRate, self.url];
+    return [NSString stringWithFormat:@"StreamInfo: %@ (%@, %@), bandwidth=%ld, resolution=%@, frameRate=%.1f, url=%@", 
+            [self qualityLevel], [self orientation], self.codecs, (long)self.bandwidth, self.resolution, self.frameRate, self.url];
 }
 
 @end
@@ -197,11 +297,25 @@
         return nil;
     }
     
-    // 首先尝试精确匹配
+    // 首先收集所有匹配指定清晰度的流
+    NSMutableArray *matchedStreams = [[NSMutableArray alloc] init];
     for (StreamInfo *stream in self.streams) {
         if ([[stream qualityLevel] isEqualToString:preferredQuality]) {
-            return stream;
+            [matchedStreams addObject:stream];
         }
+    }
+    
+    // 如果找到匹配的流，选择其中带宽最高的（品质最好的）
+    if (matchedStreams.count > 0) {
+        StreamInfo *bestStream = matchedStreams[0];
+        for (StreamInfo *stream in matchedStreams) {
+            if (stream.bandwidth > bestStream.bandwidth) {
+                bestStream = stream;
+            }
+        }
+        NSLog(@"[MasterPlaylist] 找到%lu个'%@'清晰度的流，选择带宽最高的: %.1f kbps", 
+              (unsigned long)matchedStreams.count, preferredQuality, bestStream.bandwidth / 1000.0);
+        return bestStream;
     }
     
     // 如果没有精确匹配，使用降级策略
@@ -210,17 +324,52 @@
     
     if (preferredIndex != NSNotFound) {
         // 从首选质量开始向下查找
-        for (NSInteger i = preferredIndex; i < qualityOrder.count; i++) {
+        for (NSInteger i = preferredIndex + 1; i < qualityOrder.count; i++) {
             NSString *quality = qualityOrder[i];
+            NSMutableArray *fallbackStreams = [[NSMutableArray alloc] init];
             for (StreamInfo *stream in self.streams) {
                 if ([[stream qualityLevel] isEqualToString:quality]) {
-                    return stream;
+                    [fallbackStreams addObject:stream];
                 }
+            }
+            if (fallbackStreams.count > 0) {
+                // 选择该清晰度下带宽最高的流
+                StreamInfo *bestFallback = fallbackStreams[0];
+                for (StreamInfo *stream in fallbackStreams) {
+                    if (stream.bandwidth > bestFallback.bandwidth) {
+                        bestFallback = stream;
+                    }
+                }
+                NSLog(@"[MasterPlaylist] 偏好清晰度'%@'不可用，降级为'%@'", preferredQuality, quality);
+                return bestFallback;
+            }
+        }
+        
+        // 如果降级都没有，尝试升级选择
+        for (NSInteger i = preferredIndex - 1; i >= 0; i--) {
+            NSString *quality = qualityOrder[i];
+            NSMutableArray *upgradeStreams = [[NSMutableArray alloc] init];
+            for (StreamInfo *stream in self.streams) {
+                if ([[stream qualityLevel] isEqualToString:quality]) {
+                    [upgradeStreams addObject:stream];
+                }
+            }
+            if (upgradeStreams.count > 0) {
+                // 选择该清晰度下带宽最低的流（避免过高品质）
+                StreamInfo *bestUpgrade = upgradeStreams[0];
+                for (StreamInfo *stream in upgradeStreams) {
+                    if (stream.bandwidth < bestUpgrade.bandwidth) {
+                        bestUpgrade = stream;
+                    }
+                }
+                NSLog(@"[MasterPlaylist] 偏好清晰度'%@'不可用，升级为'%@'", preferredQuality, quality);
+                return bestUpgrade;
             }
         }
     }
     
     // 如果还是没有找到，返回第一个可用的流
+    NSLog(@"[MasterPlaylist] 偏好清晰度'%@'不可用，默认选择第一个流", preferredQuality);
     return self.streams.firstObject;
 }
 
@@ -240,6 +389,64 @@
     }
     
     return [availableQualities copy];
+}
+
+- (void)printDetailedInfo {
+    NSLog(@"[MasterPlaylist] ===== 主播放列表详细信息 =====");
+    NSLog(@"[MasterPlaylist] 版本: %ld", (long)self.version);
+    NSLog(@"[MasterPlaylist] 独立片段: %@", self.hasIndependentSegments ? @"是" : @"否");
+    NSLog(@"[MasterPlaylist] 可用清晰度: %@", [self availableQualityLevels]);
+    NSLog(@"[MasterPlaylist] 元数据: %@", self.metadata);
+    
+    NSLog(@"[MasterPlaylist] ----- 流信息列表 (%lu个) -----", (unsigned long)self.streams.count);
+    
+    for (NSInteger i = 0; i < self.streams.count; i++) {
+        StreamInfo *stream = self.streams[i];
+        NSLog(@"[MasterPlaylist] 流 #%ld:", (long)(i + 1));
+        NSLog(@"  - URL: %@", stream.url);
+        NSLog(@"  - 清晰度: %@", [stream qualityLevel]);
+        NSLog(@"  - 视频方向: %@", [stream orientation]);
+        NSLog(@"  - 带宽: %ld bps (%.1f kbps)", (long)stream.bandwidth, stream.bandwidth / 1000.0);
+        NSLog(@"  - 平均带宽: %ld bps (%.1f kbps)", (long)stream.averageBandwidth, stream.averageBandwidth / 1000.0);
+        NSLog(@"  - 分辨率: %@ (%dx%d)", stream.resolution, (int)stream.width, (int)stream.height);
+        NSLog(@"  - 帧率: %.1f fps", stream.frameRate);
+        NSLog(@"  - 编解码器: %@", stream.codecs);
+        NSLog(@"  - 字幕: %@", stream.closedCaptions);
+        NSLog(@"  ---");
+    }
+    
+    // 按清晰度分组统计
+    NSMutableDictionary *qualityGroups = [[NSMutableDictionary alloc] init];
+    for (StreamInfo *stream in self.streams) {
+        NSString *quality = [stream qualityLevel];
+        NSMutableArray *group = qualityGroups[quality];
+        if (!group) {
+            group = [[NSMutableArray alloc] init];
+            qualityGroups[quality] = group;
+        }
+        [group addObject:stream];
+    }
+    
+    NSLog(@"[MasterPlaylist] ----- 按清晰度分组统计 -----");
+    NSArray *sortedQualities = @[@"蓝光", @"超清", @"高清", @"标清"];
+    for (NSString *quality in sortedQualities) {
+        NSArray *streams = qualityGroups[quality];
+        if (streams.count > 0) {
+            StreamInfo *minStream = streams[0];
+            StreamInfo *maxStream = streams[0];
+            
+            for (StreamInfo *stream in streams) {
+                if (stream.bandwidth < minStream.bandwidth) minStream = stream;
+                if (stream.bandwidth > maxStream.bandwidth) maxStream = stream;
+            }
+            
+            NSLog(@"[MasterPlaylist] %@: %lu个流", quality, (unsigned long)streams.count);
+            NSLog(@"  - 带宽范围: %.1f - %.1f kbps", minStream.bandwidth / 1000.0, maxStream.bandwidth / 1000.0);
+            NSLog(@"  - 分辨率范围: %@ - %@", minStream.resolution, maxStream.resolution);
+        }
+    }
+    
+    NSLog(@"[MasterPlaylist] ================================");
 }
 
 - (NSString *)description {

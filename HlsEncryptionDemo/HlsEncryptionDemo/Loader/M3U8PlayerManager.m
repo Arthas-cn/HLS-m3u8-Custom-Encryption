@@ -150,6 +150,7 @@
 
 #pragma mark - Private Methods
 
+
 - (void)cleanupCurrentPlayback {
     // 取消并释放session
     if (self.sessionManager) {
@@ -540,6 +541,9 @@
 - (void)parser:(id)parser didParseMasterPlaylist:(MasterPlaylist *)masterPlaylist {
     NSLog(@"[M3U8PlayerManager] 主播放列表解析完成，包含%lu个流", (unsigned long)masterPlaylist.streams.count);
     
+    // 打印主播放列表详细信息
+    [masterPlaylist printDetailedInfo];
+    
     self.currentMasterPlaylist = masterPlaylist;
     
     // 通知代理
@@ -548,16 +552,26 @@
     }
     
     // 选择合适的流
+    NSLog(@"[M3U8PlayerManager] 开始选择清晰度，偏好: %@", self.preferredQuality);
     StreamInfo *selectedStream = [self.qualitySelector selectStreamForQuality:self.preferredQuality 
                                                             fromMasterPlaylist:masterPlaylist];
     
     if (selectedStream) {
+        NSLog(@"[M3U8PlayerManager] 清晰度选择完成:");
+        NSLog(@"  - 选择的流: %@ (%dx%d)", [selectedStream qualityLevel], (int)selectedStream.width, (int)selectedStream.height);
+        NSLog(@"  - 带宽: %.1f kbps", selectedStream.bandwidth / 1000.0);
+        NSLog(@"  - URL: %@", selectedStream.url);
         [self loadStreamPlaylist:selectedStream];
+    } else {
+        NSLog(@"[M3U8PlayerManager] ⚠️ 未能选择到合适的流!");
     }
 }
 
 - (void)parser:(id)parser didParseMediaPlaylist:(MediaPlaylist *)mediaPlaylist {
     NSLog(@"[M3U8PlayerManager] 媒体播放列表解析完成，包含%lu个片段", (unsigned long)mediaPlaylist.segments.count);
+    
+    // 打印媒体播放列表详细信息
+    [mediaPlaylist printDetailedInfo];
 }
 
 - (void)parser:(id)parser didFailWithError:(NSError *)error {

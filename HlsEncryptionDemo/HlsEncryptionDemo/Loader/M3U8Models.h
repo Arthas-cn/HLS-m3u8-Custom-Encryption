@@ -55,6 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addSegment:(SegmentInfo *)segment;
 - (NSTimeInterval)totalDuration; // 计算总时长
 
+// 打印详细信息
+- (void)printDetailedInfo;
+
 @end
 
 // MARK: - 子流信息类
@@ -83,6 +86,12 @@ NS_ASSUME_NONNULL_BEGIN
 // 清晰度等级判断
 - (NSString *)qualityLevel; // 返回: "标清"/"高清"/"超清"/"蓝光"
 
+// 视频方向判断
+- (BOOL)isLandscape;      // 是否为横屏视频 (宽 > 高)
+- (BOOL)isPortrait;       // 是否为竖屏视频 (高 > 宽)
+- (BOOL)isSquare;         // 是否为正方形视频 (宽 = 高)
+- (NSString *)orientation; // 获取方向描述字符串: "横屏"/"竖屏"/"正方形"
+
 @end
 
 // MARK: - 主M3U8信息类
@@ -103,6 +112,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 获取所有可用的清晰度等级
 - (NSArray<NSString *> *)availableQualityLevels;
+
+// 打印详细信息
+- (void)printDetailedInfo;
 
 @end
 
