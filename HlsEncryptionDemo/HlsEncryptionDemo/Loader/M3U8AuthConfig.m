@@ -11,38 +11,20 @@
 @implementation M3U8AuthConfig
 
 + (instancetype)defaultTestConfig {
-    return [self configWithAuthKey:@"666"
-                                uid:@"test"
-                            session:@"test"
-                               sign:@"test"
-                          theaterId:@"9032"
-                          chapterId:@"1"];
+    // 使用文档中提供的测试encrypt_token
+    return [self configWithEncryptToken:@"1756899414.1071.1.cda114669ab49995d5dac2347512e4e8"];
 }
 
-+ (instancetype)configWithAuthKey:(NSString *)authKey
-                              uid:(NSString *)uid
-                          session:(NSString *)session
-                             sign:(NSString *)sign
-                        theaterId:(NSString *)theaterId
-                        chapterId:(NSString *)chapterId {
+
++ (instancetype)configWithEncryptToken:(NSString *)encryptToken {
     M3U8AuthConfig *config = [[M3U8AuthConfig alloc] init];
-    config.authKey = authKey;
-    config.uid = uid;
-    config.session = session;
-    config.sign = sign;
-    config.theaterId = theaterId;
-    config.chapterId = chapterId;
+    config.encryptToken = encryptToken;
     return config;
 }
 
 - (NSString *)authParamsString {
-    return [NSString stringWithFormat:@"auth_key=%@&uid=%@&session=%@&sign=%@&theater_id=%@&chapter_id=%@",
-            self.authKey ?: @"",
-            self.uid ?: @"",
-            self.session ?: @"",
-            self.sign ?: @"",
-            self.theaterId ?: @"",
-            self.chapterId ?: @""];
+    // 优先使用encrypt_token参数格式
+    return [NSString stringWithFormat:@"encrypt_token=%@", self.encryptToken ?: @""];
 }
 
 @end

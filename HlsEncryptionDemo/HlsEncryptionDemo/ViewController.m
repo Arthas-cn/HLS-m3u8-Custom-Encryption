@@ -37,12 +37,13 @@
 }
 
 - (IBAction)playButtonAction:(id)sender {
-    NSString *testURL = @"https://cdn-aws2.playlet.com/hls/v1/i18n/vip/1089/1/1_0f3c774a014fae7631c5ec79f4ec3c8d.m3u8";
+    // 使用文档中提供的测试URL
+    NSString *testURL = @"https://cdn-aws-test2.playlet.com/hls/v1/i18n/vip/1071/1/1_4434a0517b48f0b887656eba0ca0ed74_1451089_0.m3u8";
     
     // 开始播放（图层会在播放准备完毕后设置）
     [self.m3u8Player playM3U8WithURL:testURL];
     
-    NSLog(@"[ViewController] 开始播放M3U8视频");
+    NSLog(@"[ViewController] 开始播放M3U8视频：%@", testURL);
 }
 
 
