@@ -21,11 +21,20 @@
 		7EB3ADE72366E69900B13355 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADDF2366E69900B13355 /* AFNetworkReachabilityManager.m */; };
 		7EB3ADE82366E69900B13355 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADE02366E69900B13355 /* AFSecurityPolicy.m */; };
 		C9673EBC2E585FCF00D02ADB /* m3u8加解密流程.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */; };
-		C9673EBE2E585FCF00D02ADB /* M3U8AuthConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */; };
-		C9673EBF2E585FCF00D02ADB /* M3U8Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB12E585FCF00D02ADB /* M3U8Downloader.m */; };
-		C9673EC02E585FCF00D02ADB /* M3U8Player.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB72E585FCF00D02ADB /* M3U8Player.m */; };
-		C9673EC12E585FCF00D02ADB /* M3U8Loader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB52E585FCF00D02ADB /* M3U8Loader.m */; };
-		C9673EC22E585FCF00D02ADB /* M3U8KeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB32E585FCF00D02ADB /* M3U8KeyManager.m */; };
+		C9F6AF2F2E684A2700C6510F /* README_新系统使用说明.md in Resources */ = {isa = PBXBuildFile; fileRef = C9F6AF2D2E684A2700C6510F /* README_新系统使用说明.md */; };
+		C9F6AF302E684A2700C6510F /* M3U8Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF1B2E684A2700C6510F /* M3U8Downloader.m */; };
+		C9F6AF312E684A2700C6510F /* QualitySelector.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF2C2E684A2700C6510F /* QualitySelector.m */; };
+		C9F6AF322E684A2700C6510F /* M3U8AuthConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF192E684A2700C6510F /* M3U8AuthConfig.m */; };
+		C9F6AF332E684A2700C6510F /* M3U8Player.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF272E684A2700C6510F /* M3U8Player.m */; };
+		C9F6AF342E684A2700C6510F /* CacheManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF172E684A2700C6510F /* CacheManager.m */; };
+		C9F6AF352E684A2700C6510F /* CacheConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF152E684A2700C6510F /* CacheConfig.m */; };
+		C9F6AF362E684A2700C6510F /* M3U8Models.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF212E684A2700C6510F /* M3U8Models.m */; };
+		C9F6AF372E684A2700C6510F /* M3U8Loader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF1F2E684A2700C6510F /* M3U8Loader.m */; };
+		C9F6AF382E684A2700C6510F /* M3U8NewSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF232E684A2700C6510F /* M3U8NewSystem.m */; };
+		C9F6AF392E684A2700C6510F /* M3U8PlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF2A2E684A2700C6510F /* M3U8PlayerManager.m */; };
+		C9F6AF3A2E684A2700C6510F /* M3U8Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF252E684A2700C6510F /* M3U8Parser.m */; };
+		C9F6AF3B2E684A2700C6510F /* M3U8KeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF1D2E684A2700C6510F /* M3U8KeyManager.m */; };
+		C9F6AF3E2E684A4100C6510F /* DemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF3D2E684A4100C6510F /* DemoViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,18 +64,36 @@
 		7EB3ADE02366E69900B13355 /* AFSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFSecurityPolicy.m; sourceTree = "<group>"; };
 		7EB3ADE12366E69900B13355 /* AFCompatibilityMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFCompatibilityMacros.h; sourceTree = "<group>"; };
 		7EB3ADE22366E69900B13355 /* AFHTTPSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPSessionManager.h; sourceTree = "<group>"; };
-		C9673EAE2E585FCF00D02ADB /* M3U8AuthConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8AuthConfig.h; sourceTree = "<group>"; };
-		C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8AuthConfig.m; sourceTree = "<group>"; };
-		C9673EB02E585FCF00D02ADB /* M3U8Downloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Downloader.h; sourceTree = "<group>"; };
-		C9673EB12E585FCF00D02ADB /* M3U8Downloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Downloader.m; sourceTree = "<group>"; };
-		C9673EB22E585FCF00D02ADB /* M3U8KeyManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8KeyManager.h; sourceTree = "<group>"; };
-		C9673EB32E585FCF00D02ADB /* M3U8KeyManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8KeyManager.m; sourceTree = "<group>"; };
-		C9673EB42E585FCF00D02ADB /* M3U8Loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Loader.h; sourceTree = "<group>"; };
-		C9673EB52E585FCF00D02ADB /* M3U8Loader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Loader.m; sourceTree = "<group>"; };
-		C9673EB62E585FCF00D02ADB /* M3U8Player.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Player.h; sourceTree = "<group>"; };
-		C9673EB72E585FCF00D02ADB /* M3U8Player.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Player.m; sourceTree = "<group>"; };
-		C9673EB82E585FCF00D02ADB /* M3U8PlayerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8PlayerDelegate.h; sourceTree = "<group>"; };
 		C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "m3u8加解密流程.txt"; sourceTree = "<group>"; };
+		C9F6AF142E684A2700C6510F /* CacheConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CacheConfig.h; sourceTree = "<group>"; };
+		C9F6AF152E684A2700C6510F /* CacheConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CacheConfig.m; sourceTree = "<group>"; };
+		C9F6AF162E684A2700C6510F /* CacheManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CacheManager.h; sourceTree = "<group>"; };
+		C9F6AF172E684A2700C6510F /* CacheManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CacheManager.m; sourceTree = "<group>"; };
+		C9F6AF182E684A2700C6510F /* M3U8AuthConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8AuthConfig.h; sourceTree = "<group>"; };
+		C9F6AF192E684A2700C6510F /* M3U8AuthConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8AuthConfig.m; sourceTree = "<group>"; };
+		C9F6AF1A2E684A2700C6510F /* M3U8Downloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Downloader.h; sourceTree = "<group>"; };
+		C9F6AF1B2E684A2700C6510F /* M3U8Downloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Downloader.m; sourceTree = "<group>"; };
+		C9F6AF1C2E684A2700C6510F /* M3U8KeyManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8KeyManager.h; sourceTree = "<group>"; };
+		C9F6AF1D2E684A2700C6510F /* M3U8KeyManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8KeyManager.m; sourceTree = "<group>"; };
+		C9F6AF1E2E684A2700C6510F /* M3U8Loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Loader.h; sourceTree = "<group>"; };
+		C9F6AF1F2E684A2700C6510F /* M3U8Loader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Loader.m; sourceTree = "<group>"; };
+		C9F6AF202E684A2700C6510F /* M3U8Models.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Models.h; sourceTree = "<group>"; };
+		C9F6AF212E684A2700C6510F /* M3U8Models.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Models.m; sourceTree = "<group>"; };
+		C9F6AF222E684A2700C6510F /* M3U8NewSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8NewSystem.h; sourceTree = "<group>"; };
+		C9F6AF232E684A2700C6510F /* M3U8NewSystem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8NewSystem.m; sourceTree = "<group>"; };
+		C9F6AF242E684A2700C6510F /* M3U8Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Parser.h; sourceTree = "<group>"; };
+		C9F6AF252E684A2700C6510F /* M3U8Parser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Parser.m; sourceTree = "<group>"; };
+		C9F6AF262E684A2700C6510F /* M3U8Player.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Player.h; sourceTree = "<group>"; };
+		C9F6AF272E684A2700C6510F /* M3U8Player.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Player.m; sourceTree = "<group>"; };
+		C9F6AF282E684A2700C6510F /* M3U8PlayerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8PlayerDelegate.h; sourceTree = "<group>"; };
+		C9F6AF292E684A2700C6510F /* M3U8PlayerManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8PlayerManager.h; sourceTree = "<group>"; };
+		C9F6AF2A2E684A2700C6510F /* M3U8PlayerManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8PlayerManager.m; sourceTree = "<group>"; };
+		C9F6AF2B2E684A2700C6510F /* QualitySelector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QualitySelector.h; sourceTree = "<group>"; };
+		C9F6AF2C2E684A2700C6510F /* QualitySelector.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QualitySelector.m; sourceTree = "<group>"; };
+		C9F6AF2D2E684A2700C6510F /* README_新系统使用说明.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "README_新系统使用说明.md"; sourceTree = "<group>"; };
+		C9F6AF3C2E684A4100C6510F /* DemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoViewController.h; sourceTree = "<group>"; };
+		C9F6AF3D2E684A4100C6510F /* DemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoViewController.m; sourceTree = "<group>"; };
+		C9F6AF3F2E684C8900C6510F /* M3U8Kit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Kit.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,7 +126,9 @@
 		7EB3ADB72366E45000B13355 /* HlsEncryptionDemo */ = {
 			isa = PBXGroup;
 			children = (
-				C9673EBA2E585FCF00D02ADB /* Loader */,
+				C9F6AF3C2E684A4100C6510F /* DemoViewController.h */,
+				C9F6AF3D2E684A4100C6510F /* DemoViewController.m */,
+				C9F6AF2E2E684A2700C6510F /* Loader */,
 				C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */,
 				7EB3ADD42366E69900B13355 /* AFNetworking */,
 				7EB3ADB82366E45000B13355 /* AppDelegate.h */,
@@ -139,20 +168,36 @@
 			path = AFNetworking;
 			sourceTree = "<group>";
 		};
-		C9673EBA2E585FCF00D02ADB /* Loader */ = {
+		C9F6AF2E2E684A2700C6510F /* Loader */ = {
 			isa = PBXGroup;
 			children = (
-				C9673EAE2E585FCF00D02ADB /* M3U8AuthConfig.h */,
-				C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */,
-				C9673EB02E585FCF00D02ADB /* M3U8Downloader.h */,
-				C9673EB12E585FCF00D02ADB /* M3U8Downloader.m */,
-				C9673EB22E585FCF00D02ADB /* M3U8KeyManager.h */,
-				C9673EB32E585FCF00D02ADB /* M3U8KeyManager.m */,
-				C9673EB42E585FCF00D02ADB /* M3U8Loader.h */,
-				C9673EB52E585FCF00D02ADB /* M3U8Loader.m */,
-				C9673EB62E585FCF00D02ADB /* M3U8Player.h */,
-				C9673EB72E585FCF00D02ADB /* M3U8Player.m */,
-				C9673EB82E585FCF00D02ADB /* M3U8PlayerDelegate.h */,
+				C9F6AF142E684A2700C6510F /* CacheConfig.h */,
+				C9F6AF152E684A2700C6510F /* CacheConfig.m */,
+				C9F6AF162E684A2700C6510F /* CacheManager.h */,
+				C9F6AF172E684A2700C6510F /* CacheManager.m */,
+				C9F6AF182E684A2700C6510F /* M3U8AuthConfig.h */,
+				C9F6AF192E684A2700C6510F /* M3U8AuthConfig.m */,
+				C9F6AF1A2E684A2700C6510F /* M3U8Downloader.h */,
+				C9F6AF1B2E684A2700C6510F /* M3U8Downloader.m */,
+				C9F6AF1C2E684A2700C6510F /* M3U8KeyManager.h */,
+				C9F6AF1D2E684A2700C6510F /* M3U8KeyManager.m */,
+				C9F6AF1E2E684A2700C6510F /* M3U8Loader.h */,
+				C9F6AF1F2E684A2700C6510F /* M3U8Loader.m */,
+				C9F6AF202E684A2700C6510F /* M3U8Models.h */,
+				C9F6AF212E684A2700C6510F /* M3U8Models.m */,
+				C9F6AF3F2E684C8900C6510F /* M3U8Kit.h */,
+				C9F6AF222E684A2700C6510F /* M3U8NewSystem.h */,
+				C9F6AF232E684A2700C6510F /* M3U8NewSystem.m */,
+				C9F6AF242E684A2700C6510F /* M3U8Parser.h */,
+				C9F6AF252E684A2700C6510F /* M3U8Parser.m */,
+				C9F6AF262E684A2700C6510F /* M3U8Player.h */,
+				C9F6AF272E684A2700C6510F /* M3U8Player.m */,
+				C9F6AF282E684A2700C6510F /* M3U8PlayerDelegate.h */,
+				C9F6AF292E684A2700C6510F /* M3U8PlayerManager.h */,
+				C9F6AF2A2E684A2700C6510F /* M3U8PlayerManager.m */,
+				C9F6AF2B2E684A2700C6510F /* QualitySelector.h */,
+				C9F6AF2C2E684A2700C6510F /* QualitySelector.m */,
+				C9F6AF2D2E684A2700C6510F /* README_新系统使用说明.md */,
 			);
 			path = Loader;
 			sourceTree = "<group>";
@@ -216,6 +261,7 @@
 			files = (
 				7EB3ADC82366E45200B13355 /* LaunchScreen.storyboard in Resources */,
 				7EB3ADC52366E45200B13355 /* Assets.xcassets in Resources */,
+				C9F6AF2F2E684A2700C6510F /* README_新系统使用说明.md in Resources */,
 				7EB3ADC32366E45000B13355 /* Main.storyboard in Resources */,
 				C9673EBC2E585FCF00D02ADB /* m3u8加解密流程.txt in Resources */,
 			);
@@ -231,11 +277,6 @@
 				7EB3ADE62366E69900B13355 /* AFURLRequestSerialization.m in Sources */,
 				7EB3ADC02366E45000B13355 /* ViewController.m in Sources */,
 				7EB3ADE72366E69900B13355 /* AFNetworkReachabilityManager.m in Sources */,
-				C9673EBE2E585FCF00D02ADB /* M3U8AuthConfig.m in Sources */,
-				C9673EBF2E585FCF00D02ADB /* M3U8Downloader.m in Sources */,
-				C9673EC02E585FCF00D02ADB /* M3U8Player.m in Sources */,
-				C9673EC12E585FCF00D02ADB /* M3U8Loader.m in Sources */,
-				C9673EC22E585FCF00D02ADB /* M3U8KeyManager.m in Sources */,
 				7EB3ADE52366E69900B13355 /* AFURLSessionManager.m in Sources */,
 				7EB3ADBA2366E45000B13355 /* AppDelegate.m in Sources */,
 				7EB3ADCB2366E45200B13355 /* main.m in Sources */,
@@ -243,6 +284,19 @@
 				7EB3ADE42366E69900B13355 /* AFHTTPSessionManager.m in Sources */,
 				7EB3ADE82366E69900B13355 /* AFSecurityPolicy.m in Sources */,
 				7EB3ADBD2366E45000B13355 /* SceneDelegate.m in Sources */,
+				C9F6AF302E684A2700C6510F /* M3U8Downloader.m in Sources */,
+				C9F6AF312E684A2700C6510F /* QualitySelector.m in Sources */,
+				C9F6AF322E684A2700C6510F /* M3U8AuthConfig.m in Sources */,
+				C9F6AF332E684A2700C6510F /* M3U8Player.m in Sources */,
+				C9F6AF342E684A2700C6510F /* CacheManager.m in Sources */,
+				C9F6AF352E684A2700C6510F /* CacheConfig.m in Sources */,
+				C9F6AF362E684A2700C6510F /* M3U8Models.m in Sources */,
+				C9F6AF372E684A2700C6510F /* M3U8Loader.m in Sources */,
+				C9F6AF382E684A2700C6510F /* M3U8NewSystem.m in Sources */,
+				C9F6AF392E684A2700C6510F /* M3U8PlayerManager.m in Sources */,
+				C9F6AF3A2E684A2700C6510F /* M3U8Parser.m in Sources */,
+				C9F6AF3B2E684A2700C6510F /* M3U8KeyManager.m in Sources */,
+				C9F6AF3E2E684A4100C6510F /* DemoViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
