@@ -29,6 +29,7 @@
 
 @property (nonatomic, strong) NSString *currentVideoURL;
 @property (nonatomic, strong) NSString *preferredQuality;
+@property (nonatomic, strong) AFHTTPSessionManager *sessionManager; // 保持session管理器的引用
 
 @end
 
@@ -150,6 +151,12 @@
 #pragma mark - Private Methods
 
 - (void)cleanupCurrentPlayback {
+    // 取消并释放session
+    if (self.sessionManager) {
+        [self.sessionManager.session invalidateAndCancel];
+        self.sessionManager = nil;
+    }
+    
     if (self.currentPlayerItem) {
         [self.currentPlayerItem removeObserver:self forKeyPath:@"status"];
         self.currentPlayerItem = nil;
@@ -160,7 +167,32 @@
     self.currentMediaPlaylist = nil;
 }
 
+- (void)testSimpleNetworkRequest:(NSString *)url {
+    NSLog(@"[M3U8PlayerManager] 开始简单网络连接测试...");
+    
+    NSURLRequest *testRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    config.timeoutIntervalForRequest = 10.0;
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
+    
+    NSURLSessionDataTask *testTask = [session dataTaskWithRequest:testRequest completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"[M3U8PlayerManager] 简单网络测试失败: %@", error.localizedDescription);
+        } else {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+            NSLog(@"[M3U8PlayerManager] 简单网络测试成功 - 状态码: %ld, 数据长度: %lu", 
+                  (long)httpResponse.statusCode, (unsigned long)data.length);
+        }
+        [session finishTasksAndInvalidate];
+    }];
+    
+    [testTask resume];
+}
+
 - (void)downloadAndParseMasterPlaylist:(NSString *)url {
+    // 先进行简单的网络连接测试
+    [self testSimpleNetworkRequest:url];
+    
     // 生成缓存键
     NSString *token = self.authConfig ? [self.authConfig authParamsString] : @"";
     
@@ -178,30 +210,145 @@
     }
     
     // 缓存未命中，从网络下载
-    NSLog(@"[M3U8PlayerManager] 从网络下载主播放列表");
+    NSLog(@"[M3U8PlayerManager] 从网络下载主播放列表: %@", url);
     if ([self.delegate respondsToSelector:@selector(playerManager:cacheMissForURL:)]) {
         [self.delegate playerManager:self cacheMissForURL:url];
     }
     
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    // 创建临时文件路径
+    NSString *tempDir = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString];
+    [[NSFileManager defaultManager] createDirectoryAtPath:tempDir withIntermediateDirectories:YES attributes:nil error:nil];
+    NSString *tempFilePath = [tempDir stringByAppendingPathComponent:@"master.m3u8"];
     
-    [manager GET:url parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSData *data = responseObject;
+    // 配置Session（使用实例变量保持引用）
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    configuration.timeoutIntervalForRequest = 30.0;
+    configuration.timeoutIntervalForResource = 60.0;
+    self.sessionManager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:configuration];
+    AFHTTPSessionManager *manager = self.sessionManager;
+    
+    // 创建请求
+    NSURL *requestURL = [NSURL URLWithString:url];
+    if (!requestURL) {
+        NSLog(@"[M3U8PlayerManager] 无效的URL: %@", url);
+        return;
+    }
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:requestURL];
+    [request setValue:@"M3U8Player/2.0.0" forHTTPHeaderField:@"User-Agent"];
+    [request setValue:@"*/*" forHTTPHeaderField:@"Accept"];
+    [request setValue:@"gzip, deflate" forHTTPHeaderField:@"Accept-Encoding"];
+    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    
+    NSLog(@"[M3U8PlayerManager] 创建请求 - URL: %@", requestURL);
+    NSLog(@"[M3U8PlayerManager] 请求头: %@", request.allHTTPHeaderFields);
+    NSLog(@"[M3U8PlayerManager] 超时设置 - Request: %.1fs, Resource: %.1fs", 
+          configuration.timeoutIntervalForRequest, configuration.timeoutIntervalForResource);
+    
+    __weak __typeof(self)weakSelf = self;
+    NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull downloadProgress) {
+        CGFloat progress = downloadProgress.fractionCompleted;
+        NSLog(@"[M3U8PlayerManager] 下载进度: %.2f%% (%lld/%lld bytes)", 
+              progress * 100, downloadProgress.completedUnitCount, downloadProgress.totalUnitCount);
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        NSLog(@"[M3U8PlayerManager] 下载目标路径: %@", tempFilePath);
+        if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+            NSLog(@"[M3U8PlayerManager] HTTP响应 - 状态码: %ld, 头部: %@", 
+                  (long)httpResponse.statusCode, httpResponse.allHeaderFields);
+        }
+        // 返回临时存储目录
+        return [NSURL fileURLWithPath:tempFilePath];
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        if (!strongSelf) {
+            NSLog(@"[M3U8PlayerManager] strongSelf为nil，可能已经被释放");
+            return;
+        }
+        
+        NSLog(@"[M3U8PlayerManager] 下载任务完成回调");
+        NSLog(@"[M3U8PlayerManager] 下载文件路径: %@", filePath);
+        
+        if (error) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+            NSLog(@"[M3U8PlayerManager] 下载失败详情:");
+            NSLog(@"  - 错误码: %ld", (long)error.code);
+            NSLog(@"  - 错误域: %@", error.domain);
+            NSLog(@"  - 错误描述: %@", error.localizedDescription);
+            NSLog(@"  - 用户信息: %@", error.userInfo);
+            NSLog(@"  - HTTP状态码: %ld", httpResponse ? (long)httpResponse.statusCode : 0);
+            
+            // 检查常见错误类型
+            if (error.code == NSURLErrorCancelled) {
+                NSLog(@"[M3U8PlayerManager] 请求被取消 - 可能原因：应用退后台、网络切换、或手动取消");
+            } else if (error.code == NSURLErrorTimedOut) {
+                NSLog(@"[M3U8PlayerManager] 请求超时");
+            } else if (error.code == NSURLErrorNotConnectedToInternet) {
+                NSLog(@"[M3U8PlayerManager] 网络未连接");
+            } else if (error.code == NSURLErrorNetworkConnectionLost) {
+                NSLog(@"[M3U8PlayerManager] 网络连接丢失");
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([strongSelf.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
+                    [strongSelf.delegate playerManager:strongSelf didFailWithError:error];
+                }
+            });
+            
+            // 清理临时文件
+            [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
+            return;
+        }
+        
+        // 读取下载的文件
+        NSData *data = [NSData dataWithContentsOfFile:tempFilePath];
+        if (!data) {
+            NSError *readError = [NSError errorWithDomain:@"M3U8PlayerError" 
+                                                     code:1001 
+                                                 userInfo:@{NSLocalizedDescriptionKey: @"无法读取下载的M3U8文件"}];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([strongSelf.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
+                    [strongSelf.delegate playerManager:strongSelf didFailWithError:readError];
+                }
+            });
+            
+            // 清理临时文件
+            [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
+            return;
+        }
+        
+        NSLog(@"[M3U8PlayerManager] 主播放列表下载成功，大小: %lu bytes", (unsigned long)data.length);
         
         // 缓存数据
-        [self.cacheManager cacheData:data forURL:url token:token];
+        [strongSelf.cacheManager cacheData:data forURL:url token:token];
         
         // 解析内容
         NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        [self.parser parseMasterPlaylistAsync:content baseURL:url completion:nil];
-        
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"[M3U8PlayerManager] 主播放列表下载失败: %@", error.localizedDescription);
-        if ([self.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
-            [self.delegate playerManager:self didFailWithError:error];
+        if (content) {
+            [strongSelf.parser parseMasterPlaylistAsync:content baseURL:url completion:nil];
+        } else {
+            NSError *parseError = [NSError errorWithDomain:@"M3U8PlayerError" 
+                                                      code:1002 
+                                                  userInfo:@{NSLocalizedDescriptionKey: @"M3U8文件编码解析失败"}];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([strongSelf.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
+                    [strongSelf.delegate playerManager:strongSelf didFailWithError:parseError];
+                }
+            });
         }
+        
+        // 清理临时文件
+        [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
     }];
+    
+    // 开始下载
+    NSLog(@"[M3U8PlayerManager] 主播放列表任务创建完成，开始下载...");
+    NSLog(@"[M3U8PlayerManager] 任务状态: %ld", (long)task.state);
+    NSLog(@"[M3U8PlayerManager] Session配置: %@", manager.session.configuration);
+    
+    [task resume];
+    
+    NSLog(@"[M3U8PlayerManager] 主播放列表任务已启动，当前状态: %ld", (long)task.state);
 }
 
 - (void)loadStreamPlaylist:(StreamInfo *)stream {
@@ -222,33 +369,103 @@
     }
     
     // 从网络下载
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    NSLog(@"[M3U8PlayerManager] 从网络下载子流播放列表: %@", streamURL);
     
-    [manager GET:streamURL parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        NSData *data = responseObject;
+    // 创建临时文件路径
+    NSString *tempDir = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSUUID UUID].UUIDString];
+    [[NSFileManager defaultManager] createDirectoryAtPath:tempDir withIntermediateDirectories:YES attributes:nil error:nil];
+    NSString *tempFilePath = [tempDir stringByAppendingPathComponent:@"stream.m3u8"];
+    
+    // 配置Session
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    configuration.timeoutIntervalForRequest = 30.0;
+    configuration.timeoutIntervalForResource = 60.0;
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:configuration];
+    
+    // 创建请求
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:streamURL]];
+    [request setValue:@"M3U8Player/2.0.0" forHTTPHeaderField:@"User-Agent"];
+    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
+    
+    __weak __typeof(self)weakSelf = self;
+    NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:request progress:nil destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        // 返回临时存储目录
+        return [NSURL fileURLWithPath:tempFilePath];
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        __strong __typeof(weakSelf)strongSelf = weakSelf;
+        if (!strongSelf) return;
+        
+        [manager.session finishTasksAndInvalidate];
+        
+        if (error) {
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+            NSLog(@"[M3U8PlayerManager] 子流播放列表下载失败: %@, HTTP状态码: %ld", 
+                  error.localizedDescription, httpResponse ? (long)httpResponse.statusCode : 0);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([strongSelf.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
+                    [strongSelf.delegate playerManager:strongSelf didFailWithError:error];
+                }
+            });
+            
+            // 清理临时文件
+            [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
+            return;
+        }
+        
+        // 读取下载的文件
+        NSData *data = [NSData dataWithContentsOfFile:tempFilePath];
+        if (!data) {
+            NSError *readError = [NSError errorWithDomain:@"M3U8PlayerError" 
+                                                     code:1003 
+                                                 userInfo:@{NSLocalizedDescriptionKey: @"无法读取下载的子流M3U8文件"}];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([strongSelf.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
+                    [strongSelf.delegate playerManager:strongSelf didFailWithError:readError];
+                }
+            });
+            
+            // 清理临时文件
+            [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
+            return;
+        }
+        
+        NSLog(@"[M3U8PlayerManager] 子流播放列表下载成功，大小: %lu bytes", (unsigned long)data.length);
         
         // 缓存数据
-        [self.cacheManager cacheData:data forURL:streamURL token:token];
+        [strongSelf.cacheManager cacheData:data forURL:streamURL token:token];
         
         // 解析内容
         NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        [self.parser parseMediaPlaylistAsync:content baseURL:streamURL completion:^(MediaPlaylist * _Nullable playlist, NSError * _Nullable error) {
-            if (playlist) {
-                [self setupPlayerWithMediaPlaylist:playlist stream:stream];
-            } else if (error) {
-                if ([self.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
-                    [self.delegate playerManager:self didFailWithError:error];
+        if (content) {
+            [strongSelf.parser parseMediaPlaylistAsync:content baseURL:streamURL completion:^(MediaPlaylist * _Nullable playlist, NSError * _Nullable error) {
+                if (playlist) {
+                    [strongSelf setupPlayerWithMediaPlaylist:playlist stream:stream];
+                } else if (error) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if ([strongSelf.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
+                            [strongSelf.delegate playerManager:strongSelf didFailWithError:error];
+                        }
+                    });
                 }
-            }
-        }];
-        
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"[M3U8PlayerManager] 子流播放列表下载失败: %@", error.localizedDescription);
-        if ([self.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
-            [self.delegate playerManager:self didFailWithError:error];
+            }];
+        } else {
+            NSError *parseError = [NSError errorWithDomain:@"M3U8PlayerError" 
+                                                      code:1004 
+                                                  userInfo:@{NSLocalizedDescriptionKey: @"子流M3U8文件编码解析失败"}];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ([strongSelf.delegate respondsToSelector:@selector(playerManager:didFailWithError:)]) {
+                    [strongSelf.delegate playerManager:strongSelf didFailWithError:parseError];
+                }
+            });
         }
+        
+        // 清理临时文件
+        [[NSFileManager defaultManager] removeItemAtPath:tempDir error:nil];
     }];
+    
+    // 开始下载
+    [task resume];
 }
 
 - (void)setupPlayerWithMediaPlaylist:(MediaPlaylist *)mediaPlaylist stream:(StreamInfo *)stream {
