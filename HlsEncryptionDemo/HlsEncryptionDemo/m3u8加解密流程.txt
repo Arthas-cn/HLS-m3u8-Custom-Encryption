@@ -17,8 +17,10 @@ m3u8加解密参考文档：https://help.aliyun.com/zh/cdn/user-guide/m3u8-encry
 1_4434a0517b48f0b887656eba0ca0ed74_1451089_2.m3u8
 
 ```
+要求：将上面的m3u8内容进行识别，归纳到一个类，最好是完整的M3U8类识别
 例如：
 https://cdn-aws2.playlet.com/hls/v1/i18n/vip/1089/1/1_0f3c774a014fae7631c5ec79f4ec3c8d_1451089_1.m3u8
+
 子流文件内容：
 ```
 #EXTM3U
@@ -49,3 +51,99 @@ https://cdn-aws2.playlet.com/hls/v1/i18n/vip/1089/1/1_0f3c774a014fae7631c5ec79f4
 完整的解密地址：https://api2.playlet.com/open/theater/hlsVerify?encrypt_token=1756899414.1071.1.cda114669ab49995d5dac2347512e4e8
 播放器获取到密钥之后会自动去解密并播放视频
 
+## 系统设计要求
+
+### 总体原则
+- 所有都是重新设计，不需要考虑任何兼容性，符合设计原则
+- 不使用任何缓存机制
+- 所有错误情况最终表现为播放失败
+
+### 核心组件设计
+
+#### 1. M3U8解析器模块
+**1.1 主M3U8信息类 (MasterPlaylist)**
+- 解析主M3U8文件内容，包含多个子流信息
+- 属性包括：版本信息、子流列表、元数据等
+- 示例解析内容：
+```
+#EXTM3U
+#EXT-X-INDEPENDENT-SEGMENTS
+#EXT-X-STREAM-INF:BANDWIDTH=416608,AVERAGE-BANDWIDTH=345388,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=480x852,FRAME-RATE=25.000,CLOSED-CAPTIONS=NONE
+1_4434a0517b48f0b887656eba0ca0ed74_1451089_0.m3u8
+```
+
+**1.2 子流信息类 (StreamInfo)**
+- 解析EXT-X-STREAM-INF标签的所有属性
+- 属性包括：带宽、平均带宽、编解码器、分辨率、帧率、字幕信息、子流URL等
+- 提供清晰度等级判断方法
+
+**1.3 媒体播放列表类 (MediaPlaylist)**
+- 解析具体的子流M3U8文件内容
+- 示例解析内容：
+```
+#EXTM3U
+#EXT-X-VERSION:6
+#EXT-X-TARGETDURATION:10
+#EXT-X-PLAYLIST-TYPE:VOD
+#EXT-X-KEY:METHOD=AES-128,URI="https://api2-test.playletonline.com/open/theater/hlsVerify",IV=0x2BD3D66274639C642FF8A9C921A36B25,KEYFORMAT="identity"
+#EXTINF:3.000,
+1_4434a0517b48f0b887656eba0ca0ed74_1451089_0_1.ts
+```
+
+**1.4 TS片段信息类 (SegmentInfo)**
+- 解析EXTINF标签信息
+- 属性包括：时长、URL、序号等
+
+**1.5 加密信息类 (EncryptionInfo)**
+- 解析EXT-X-KEY标签信息
+- 属性包括：加密方法、密钥URI、IV值、密钥格式等
+
+#### 2. 播放控制模块
+**2.1 播放器代理接口**
+- 子流选择策略：根据用户设置的清晰度偏好（标清、高清、超清等）选择合适的子流
+- 播放状态变化通知
+- 解析进度回调
+
+**2.2 清晰度选择器**
+- 根据StreamInfo提供的分辨率和带宽信息进行分级
+- 支持用户手动选择清晰度
+- 通过代理模式通知播放器最终选择的子流
+
+#### 3. 密钥管理模块
+**3.1 授权配置类**
+- 外部参数配置密钥授权信息
+- 支持动态获取授权参数（encrypt_token等）
+- 示例：完整密钥请求地址拼接逻辑
+
+**3.2 密钥请求处理器**
+- 拦截播放器的密钥请求
+- 在密钥URI后拼接授权参数
+- 处理密钥获取的网络请求
+
+#### 4. 错误处理策略
+**4.1 网络请求失败**
+- M3U8文件下载失败 → 播放失败
+- 密钥获取失败 → 播放失败
+- TS片段下载失败 → 播放失败
+
+**4.2 解析失败**
+- M3U8格式解析失败 → 播放失败
+- 密钥信息解析失败 → 播放失败
+
+#### 5. 接口设计
+**5.1 解析进度回调**
+- 主M3U8解析完成通知
+- 子流M3U8解析完成通知
+- 密钥获取进度通知
+
+**5.2 播放状态代理**
+- 子流选择确认回调
+- 播放器状态变化通知
+- 错误状态通知
+
+### 实现细节要求
+1. 所有解析器类要独立设计，职责单一
+2. 数据模型类和解析器类分离
+3. 代理模式实现松耦合的组件通信
+4. 统一的错误处理机制
+5. 清晰的接口设计支持扩展性

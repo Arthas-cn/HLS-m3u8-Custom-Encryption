@@ -21,7 +21,6 @@
 		7EB3ADE72366E69900B13355 /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADDF2366E69900B13355 /* AFNetworkReachabilityManager.m */; };
 		7EB3ADE82366E69900B13355 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADE02366E69900B13355 /* AFSecurityPolicy.m */; };
 		C9673EBC2E585FCF00D02ADB /* m3u8加解密流程.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */; };
-		C9673EBD2E585FCF00D02ADB /* readme.svg in Resources */ = {isa = PBXBuildFile; fileRef = C9673EB92E585FCF00D02ADB /* readme.svg */; };
 		C9673EBE2E585FCF00D02ADB /* M3U8AuthConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EAF2E585FCF00D02ADB /* M3U8AuthConfig.m */; };
 		C9673EBF2E585FCF00D02ADB /* M3U8Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB12E585FCF00D02ADB /* M3U8Downloader.m */; };
 		C9673EC02E585FCF00D02ADB /* M3U8Player.m in Sources */ = {isa = PBXBuildFile; fileRef = C9673EB72E585FCF00D02ADB /* M3U8Player.m */; };
@@ -67,7 +66,6 @@
 		C9673EB62E585FCF00D02ADB /* M3U8Player.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Player.h; sourceTree = "<group>"; };
 		C9673EB72E585FCF00D02ADB /* M3U8Player.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Player.m; sourceTree = "<group>"; };
 		C9673EB82E585FCF00D02ADB /* M3U8PlayerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8PlayerDelegate.h; sourceTree = "<group>"; };
-		C9673EB92E585FCF00D02ADB /* readme.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.svg; sourceTree = "<group>"; };
 		C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "m3u8加解密流程.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -155,7 +153,6 @@
 				C9673EB62E585FCF00D02ADB /* M3U8Player.h */,
 				C9673EB72E585FCF00D02ADB /* M3U8Player.m */,
 				C9673EB82E585FCF00D02ADB /* M3U8PlayerDelegate.h */,
-				C9673EB92E585FCF00D02ADB /* readme.svg */,
 			);
 			path = Loader;
 			sourceTree = "<group>";
@@ -221,7 +218,6 @@
 				7EB3ADC52366E45200B13355 /* Assets.xcassets in Resources */,
 				7EB3ADC32366E45000B13355 /* Main.storyboard in Resources */,
 				C9673EBC2E585FCF00D02ADB /* m3u8加解密流程.txt in Resources */,
-				C9673EBD2E585FCF00D02ADB /* readme.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
