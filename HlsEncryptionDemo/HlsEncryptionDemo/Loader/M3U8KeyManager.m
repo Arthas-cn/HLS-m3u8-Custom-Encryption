@@ -226,8 +226,7 @@
         if (data) {
             // 修改M3U8内容，将密钥URL替换为自定义scheme
             NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            NSString *modifiedContent = [content stringByReplacingOccurrencesOfString:@"https://api2-test.playletonline.com/open/theater/hlsVerify" 
-                                                                           withString:@"m3u8-key://api2-test.playletonline.com/open/theater/hlsVerify"];
+            NSString *modifiedContent = [content stringByReplacingOccurrencesOfString:@"https://" withString:@"m3u8-key://"];
             
             // 也需要将TS文件URL替换为自定义scheme
             modifiedContent = [self replaceRelativeURLsInM3U8:modifiedContent withBaseURL:url];
