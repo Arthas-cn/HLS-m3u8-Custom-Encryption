@@ -7,12 +7,14 @@
 //
 
 #import "M3U8KeyManager.h"
+#import "M3U8Loader.h"
 #import "AFNetworking.h"
 
-@interface M3U8KeyManager ()
+@interface M3U8KeyManager () <M3U8LoaderDelegate>
 @property (nonatomic, strong) NSMutableDictionary *keyCache;
 @property (nonatomic, assign) BOOL isLocalMode;
 @property (nonatomic, strong) NSString *originalURL;
+@property (nonatomic, strong) M3U8Loader *m3u8Loader;
 @end
 
 @implementation M3U8KeyManager
@@ -30,12 +32,15 @@
     self = [super init];
     if (self) {
         _keyCache = [[NSMutableDictionary alloc] init];
+        _m3u8Loader = [M3U8Loader new];
+        _m3u8Loader.delegate = self;
     }
     return self;
 }
 
 - (void)configureWithAuthConfig:(M3U8AuthConfig *)authConfig {
     self.authConfig = authConfig;
+    [self.m3u8Loader configureWithAuthConfig:authConfig];
 }
 
 - (void)setupResourceLoaderForAsset:(AVURLAsset *)asset {
@@ -287,16 +292,15 @@
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     __block NSData *result = nil;
     
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    
-    [manager GET:url parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        result = responseObject;
-        NSLog(@"[M3U8KeyManager] 数据下载成功，长度: %lu", (unsigned long)result.length);
-        dispatch_semaphore_signal(semaphore);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"[M3U8KeyManager] 数据下载失败: %@", error.localizedDescription);
-        result = nil;
+    // 使用M3U8Loader下载数据
+    [self.m3u8Loader loadM3U8WithURL:url completion:^(NSString * _Nullable content, NSError * _Nullable error) {
+        if (content) {
+            result = [content dataUsingEncoding:NSUTF8StringEncoding];
+            NSLog(@"[M3U8KeyManager] 使用M3U8Loader下载成功，长度: %lu", (unsigned long)result.length);
+        } else {
+            NSLog(@"[M3U8KeyManager] 使用M3U8Loader下载失败: %@", error.localizedDescription);
+            result = nil;
+        }
         dispatch_semaphore_signal(semaphore);
     }];
     
@@ -309,6 +313,31 @@
                                                  code:400 
                                              userInfo:@{NSLocalizedDescriptionKey: message}];
     [loadingRequest finishLoadingWithError:error];
+}
+
+#pragma mark - M3U8LoaderDelegate
+
+- (void)loader:(M3U8Loader *)loader didLoadContent:(NSString *)content fromURL:(NSString *)url {
+    NSLog(@"[M3U8KeyManager] M3U8Loader加载成功: %@", url);
+    // 这里只是记录日志，实际的内容处理在完成回调中进行
+}
+
+- (void)loader:(M3U8Loader *)loader didFailWithError:(NSError *)error forURL:(NSString *)url {
+    NSLog(@"[M3U8KeyManager] M3U8Loader加载失败: %@ - %@", url, error.localizedDescription);
+    // 这里只是记录日志，实际的错误处理在完成回调中进行
+}
+
+- (void)loader:(M3U8Loader *)loader downloadProgress:(float)progress forURL:(NSString *)url {
+    NSLog(@"[M3U8KeyManager] M3U8下载进度: %.2f%% - %@", progress * 100, url);
+    // 密钥和M3U8文件下载进度
+}
+
+- (void)loader:(M3U8Loader *)loader cacheHitForURL:(NSString *)url {
+    NSLog(@"[M3U8KeyManager] M3U8缓存命中: %@", url);
+}
+
+- (void)loader:(M3U8Loader *)loader cacheMissForURL:(NSString *)url {
+    NSLog(@"[M3U8KeyManager] M3U8缓存未命中: %@", url);
 }
 
 @end

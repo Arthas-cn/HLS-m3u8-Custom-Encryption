@@ -12,7 +12,7 @@
 
 + (instancetype)defaultTestConfig {
     // 使用文档中提供的测试encrypt_token
-    return [self configWithEncryptToken:@"1756963506.1071.1.a175be5f505a22e190f6abe9fd4d7a0c"];
+    return [self configWithEncryptToken:@"1756976149.1071.1.38a823c95d5665f2f85ced76464094f1"];
 }
 
 

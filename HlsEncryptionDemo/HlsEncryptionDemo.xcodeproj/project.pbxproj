@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		7EB3ADBA2366E45000B13355 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADB92366E45000B13355 /* AppDelegate.m */; };
 		7EB3ADBD2366E45000B13355 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADBC2366E45000B13355 /* SceneDelegate.m */; };
-		7EB3ADC02366E45000B13355 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADBF2366E45000B13355 /* ViewController.m */; };
 		7EB3ADC32366E45000B13355 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EB3ADC12366E45000B13355 /* Main.storyboard */; };
 		7EB3ADC52366E45200B13355 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7EB3ADC42366E45200B13355 /* Assets.xcassets */; };
 		7EB3ADC82366E45200B13355 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EB3ADC62366E45200B13355 /* LaunchScreen.storyboard */; };
@@ -22,19 +21,18 @@
 		7EB3ADE82366E69900B13355 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB3ADE02366E69900B13355 /* AFSecurityPolicy.m */; };
 		C9673EBC2E585FCF00D02ADB /* m3u8加解密流程.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9673EBB2E585FCF00D02ADB /* m3u8加解密流程.txt */; };
 		C9F6AF2F2E684A2700C6510F /* README_新系统使用说明.md in Resources */ = {isa = PBXBuildFile; fileRef = C9F6AF2D2E684A2700C6510F /* README_新系统使用说明.md */; };
-		C9F6AF302E684A2700C6510F /* M3U8Downloader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF1B2E684A2700C6510F /* M3U8Downloader.m */; };
 		C9F6AF312E684A2700C6510F /* QualitySelector.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF2C2E684A2700C6510F /* QualitySelector.m */; };
 		C9F6AF322E684A2700C6510F /* M3U8AuthConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF192E684A2700C6510F /* M3U8AuthConfig.m */; };
 		C9F6AF332E684A2700C6510F /* M3U8Player.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF272E684A2700C6510F /* M3U8Player.m */; };
 		C9F6AF342E684A2700C6510F /* CacheManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF172E684A2700C6510F /* CacheManager.m */; };
 		C9F6AF352E684A2700C6510F /* CacheConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF152E684A2700C6510F /* CacheConfig.m */; };
 		C9F6AF362E684A2700C6510F /* M3U8Models.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF212E684A2700C6510F /* M3U8Models.m */; };
-		C9F6AF372E684A2700C6510F /* M3U8Loader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF1F2E684A2700C6510F /* M3U8Loader.m */; };
 		C9F6AF382E684A2700C6510F /* M3U8NewSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF232E684A2700C6510F /* M3U8NewSystem.m */; };
 		C9F6AF392E684A2700C6510F /* M3U8PlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF2A2E684A2700C6510F /* M3U8PlayerManager.m */; };
 		C9F6AF3A2E684A2700C6510F /* M3U8Parser.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF252E684A2700C6510F /* M3U8Parser.m */; };
 		C9F6AF3B2E684A2700C6510F /* M3U8KeyManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF1D2E684A2700C6510F /* M3U8KeyManager.m */; };
 		C9F6AF3E2E684A4100C6510F /* DemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AF3D2E684A4100C6510F /* DemoViewController.m */; };
+		C9F6AFA52E6963C000C6510F /* M3U8Loader.m in Sources */ = {isa = PBXBuildFile; fileRef = C9F6AFA42E6963C000C6510F /* M3U8Loader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,8 +41,6 @@
 		7EB3ADB92366E45000B13355 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		7EB3ADBB2366E45000B13355 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		7EB3ADBC2366E45000B13355 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
-		7EB3ADBE2366E45000B13355 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		7EB3ADBF2366E45000B13355 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		7EB3ADC22366E45000B13355 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7EB3ADC42366E45200B13355 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7EB3ADC72366E45200B13355 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -71,12 +67,8 @@
 		C9F6AF172E684A2700C6510F /* CacheManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CacheManager.m; sourceTree = "<group>"; };
 		C9F6AF182E684A2700C6510F /* M3U8AuthConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8AuthConfig.h; sourceTree = "<group>"; };
 		C9F6AF192E684A2700C6510F /* M3U8AuthConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8AuthConfig.m; sourceTree = "<group>"; };
-		C9F6AF1A2E684A2700C6510F /* M3U8Downloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Downloader.h; sourceTree = "<group>"; };
-		C9F6AF1B2E684A2700C6510F /* M3U8Downloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Downloader.m; sourceTree = "<group>"; };
 		C9F6AF1C2E684A2700C6510F /* M3U8KeyManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8KeyManager.h; sourceTree = "<group>"; };
 		C9F6AF1D2E684A2700C6510F /* M3U8KeyManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8KeyManager.m; sourceTree = "<group>"; };
-		C9F6AF1E2E684A2700C6510F /* M3U8Loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Loader.h; sourceTree = "<group>"; };
-		C9F6AF1F2E684A2700C6510F /* M3U8Loader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Loader.m; sourceTree = "<group>"; };
 		C9F6AF202E684A2700C6510F /* M3U8Models.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Models.h; sourceTree = "<group>"; };
 		C9F6AF212E684A2700C6510F /* M3U8Models.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Models.m; sourceTree = "<group>"; };
 		C9F6AF222E684A2700C6510F /* M3U8NewSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8NewSystem.h; sourceTree = "<group>"; };
@@ -94,6 +86,8 @@
 		C9F6AF3C2E684A4100C6510F /* DemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DemoViewController.h; sourceTree = "<group>"; };
 		C9F6AF3D2E684A4100C6510F /* DemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DemoViewController.m; sourceTree = "<group>"; };
 		C9F6AF3F2E684C8900C6510F /* M3U8Kit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Kit.h; sourceTree = "<group>"; };
+		C9F6AFA32E6963C000C6510F /* M3U8Loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = M3U8Loader.h; sourceTree = "<group>"; };
+		C9F6AFA42E6963C000C6510F /* M3U8Loader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3U8Loader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,8 +129,6 @@
 				7EB3ADB92366E45000B13355 /* AppDelegate.m */,
 				7EB3ADBB2366E45000B13355 /* SceneDelegate.h */,
 				7EB3ADBC2366E45000B13355 /* SceneDelegate.m */,
-				7EB3ADBE2366E45000B13355 /* ViewController.h */,
-				7EB3ADBF2366E45000B13355 /* ViewController.m */,
 				7EB3ADC12366E45000B13355 /* Main.storyboard */,
 				7EB3ADC42366E45200B13355 /* Assets.xcassets */,
 				7EB3ADC62366E45200B13355 /* LaunchScreen.storyboard */,
@@ -177,12 +169,10 @@
 				C9F6AF172E684A2700C6510F /* CacheManager.m */,
 				C9F6AF182E684A2700C6510F /* M3U8AuthConfig.h */,
 				C9F6AF192E684A2700C6510F /* M3U8AuthConfig.m */,
-				C9F6AF1A2E684A2700C6510F /* M3U8Downloader.h */,
-				C9F6AF1B2E684A2700C6510F /* M3U8Downloader.m */,
+				C9F6AFA32E6963C000C6510F /* M3U8Loader.h */,
+				C9F6AFA42E6963C000C6510F /* M3U8Loader.m */,
 				C9F6AF1C2E684A2700C6510F /* M3U8KeyManager.h */,
 				C9F6AF1D2E684A2700C6510F /* M3U8KeyManager.m */,
-				C9F6AF1E2E684A2700C6510F /* M3U8Loader.h */,
-				C9F6AF1F2E684A2700C6510F /* M3U8Loader.m */,
 				C9F6AF202E684A2700C6510F /* M3U8Models.h */,
 				C9F6AF212E684A2700C6510F /* M3U8Models.m */,
 				C9F6AF3F2E684C8900C6510F /* M3U8Kit.h */,
@@ -275,23 +265,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				7EB3ADE62366E69900B13355 /* AFURLRequestSerialization.m in Sources */,
-				7EB3ADC02366E45000B13355 /* ViewController.m in Sources */,
 				7EB3ADE72366E69900B13355 /* AFNetworkReachabilityManager.m in Sources */,
 				7EB3ADE52366E69900B13355 /* AFURLSessionManager.m in Sources */,
 				7EB3ADBA2366E45000B13355 /* AppDelegate.m in Sources */,
 				7EB3ADCB2366E45200B13355 /* main.m in Sources */,
+				C9F6AFA52E6963C000C6510F /* M3U8Loader.m in Sources */,
 				7EB3ADE32366E69900B13355 /* AFURLResponseSerialization.m in Sources */,
 				7EB3ADE42366E69900B13355 /* AFHTTPSessionManager.m in Sources */,
 				7EB3ADE82366E69900B13355 /* AFSecurityPolicy.m in Sources */,
 				7EB3ADBD2366E45000B13355 /* SceneDelegate.m in Sources */,
-				C9F6AF302E684A2700C6510F /* M3U8Downloader.m in Sources */,
 				C9F6AF312E684A2700C6510F /* QualitySelector.m in Sources */,
 				C9F6AF322E684A2700C6510F /* M3U8AuthConfig.m in Sources */,
 				C9F6AF332E684A2700C6510F /* M3U8Player.m in Sources */,
 				C9F6AF342E684A2700C6510F /* CacheManager.m in Sources */,
 				C9F6AF352E684A2700C6510F /* CacheConfig.m in Sources */,
 				C9F6AF362E684A2700C6510F /* M3U8Models.m in Sources */,
-				C9F6AF372E684A2700C6510F /* M3U8Loader.m in Sources */,
 				C9F6AF382E684A2700C6510F /* M3U8NewSystem.m in Sources */,
 				C9F6AF392E684A2700C6510F /* M3U8PlayerManager.m in Sources */,
 				C9F6AF3A2E684A2700C6510F /* M3U8Parser.m in Sources */,

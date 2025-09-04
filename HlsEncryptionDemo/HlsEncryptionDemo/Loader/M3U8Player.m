@@ -24,7 +24,7 @@
     self = [super init];
     if (self) {
         _authConfig = authConfig ?: [M3U8AuthConfig defaultTestConfig];
-        _keyManager = [M3U8KeyManager sharedManager];
+        _keyManager = [M3U8KeyManager new];
         [_keyManager configureWithAuthConfig:_authConfig];
         
         // 设置密钥管理器的代理为当前播放器，用于转发代理事件

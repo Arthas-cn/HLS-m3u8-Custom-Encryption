@@ -19,7 +19,6 @@
 #import "M3U8PlayerManager.h" //播放器管理器
 #import "M3U8PlayerDelegate.h" //播放器代理
 #import "M3U8Player.h" //播放器
-#import "M3U8Downloader.h" //下载器
 #import "M3U8Loader.h" //M3U8加载器
 #import "M3U8NewSystem.h" //M3U8新系统
 

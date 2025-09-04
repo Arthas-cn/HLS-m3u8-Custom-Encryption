@@ -22,10 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id<M3U8PlayerDelegate> delegate;
 @property (nonatomic, strong) M3U8AuthConfig *authConfig;
 
-/**
- * 单例
- */
-+ (instancetype)sharedManager;
 
 /**
  * 配置授权信息
