@@ -50,6 +50,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)playerManager:(id)manager didFailWithError:(NSError *)error;
 
+/**
+ * 清晰度切换开始
+ */
+- (void)playerManager:(id)manager willSwitchToQuality:(NSString *)quality;
+
+/**
+ * 清晰度切换完成
+ */
+- (void)playerManager:(id)manager didSwitchToQuality:(NSString *)quality;
+
 @end
 
 /**
@@ -82,9 +92,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)playVideoWithURL:(NSString *)url preferredQuality:(NSString *)preferredQuality;
 
 /**
- * 切换清晰度
+ * 切换清晰度（无缝切换，保持播放进度）
  */
 - (void)switchToQuality:(NSString *)quality;
+
+/**
+ * 获取当前播放时间
+ */
+- (CMTime)currentPlayTime;
+
+/**
+ * 跳转到指定时间（带完成回调）
+ */
+- (void)seekToTime:(CMTime)time completionHandler:(void (^)(BOOL finished))completionHandler;
 
 /**
  * 暂停播放
